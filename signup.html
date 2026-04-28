@@ -20,10 +20,8 @@
     </div>
   </div>
 </nav>
-
 <div class="auth-body">
   <div class="auth-card">
-
     <div class="auth-logo">
       <a href="index.html" class="logo" style="font-size:26px;">Uni<span>Swap</span></a>
       <p style="font-size:13px;color:var(--text3);margin-top:6px;">Academic Exchange Platform</p>
@@ -102,6 +100,15 @@
 
 <script>
 if (Auth.isLoggedIn()) window.location.href = 'dashboard.html';
+
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.className = 'toast' + (type === 'error' ? ' toast-error' : ' toast-success');
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
 
 var selectedDomain = '';
 
