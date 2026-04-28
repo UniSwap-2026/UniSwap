@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
@@ -7,24 +7,40 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<script src="api.js"></script>
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar">
   <div class="container">
     <div class="navbar-inner">
       <a href="index.html" class="logo">Uni<span>Swap</span></a>
       <ul class="nav-links">
-        <li><a href="listings.html">Announcements</a></li>
+        <li><a href="listings.html?domain=medical">Medical</a></li>
+        <li><a href="listings.html?domain=eng">Engineering</a></li>
+        <li><a href="listings.html?domain=arts">Humanities</a></li>
         <li><a href="research-hub.html">Research Hub</a></li>
-        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
+        <li><a href="needs-board.html" class="needs-link"> Needs</a></li>
       </ul>
-      <div class="nav-actions" id="navActions">
+      <div class="nav-actions">
         <a href="login.html" class="btn btn-outline">Login</a>
         <a href="signup.html" class="btn btn-primary">Sign Up Free</a>
       </div>
-    
+      <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="listings.html?domain=medical">Medical</a>
+    <a href="listings.html?domain=eng">Engineering</a>
+    <a href="listings.html?domain=arts">Humanities</a>
+    <a href="research-hub.html">Research Hub</a>
+    <a href="#" style="color:var(--teal);font-weight:600;"> Needs</a>
+    <div class="mobile-actions">
+      <a href="login.html" class="btn btn-outline">Login</a>
+      <a href="signup.html" class="btn btn-primary">Sign Up</a>
+    </div>
   </div>
 </nav>
 
@@ -33,21 +49,92 @@
   <div class="container">
     <div class="hero-inner">
       <div class="hero-text">
-        <div class="hero-eyebrow fade-up"><span class="dot"></span> A Student Platform for Students</div>
-        <h1 class="fade-up fade-up-1">Exchange Your Tools.<br><em>Save and Help</em><br>Your Fellow Student</h1>
-        <p class="hero-sub fade-up fade-up-2">UniSwap lets you exchange, donate, and sell your academic tools with students from your own university — easy, safe, and no middleman.</p>
+        <div class="hero-eyebrow fade-up">
+          <span class="dot"></span>
+          A Student Platform for Students
+        </div>
+        <h1 class="fade-up fade-up-1">
+          Exchange Your Tools.<br>
+          <em>Save and Help</em><br>
+          Your Fellow Student
+        </h1>
+        <p class="hero-sub fade-up fade-up-2">
+          UniSwap lets you exchange, donate, and sell your academic tools with students from your own university — easy, safe, and no middleman.
+        </p>
         <div class="hero-btns fade-up fade-up-3">
           <a href="signup.html" class="btn btn-white">Start Now</a>
           <a href="listings.html" class="btn" style="background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25);">Browse Listings</a>
         </div>
         <div class="hero-stats fade-up fade-up-4">
-          <div class="hero-stat"><div class="hero-stat-num" id="heroTotal">—</div><div class="hero-stat-label">Active Listings</div></div>
-          <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label">Academic Fields</div></div>
-          <div class="hero-stat"><div class="hero-stat-num">60%</div><div class="hero-stat-label">Average Savings</div></div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">2000+</div>
+            <div class="hero-stat-label">Registered Students</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">850+</div>
+            <div class="hero-stat-label">Active Listings</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">60%</div>
+            <div class="hero-stat-label">Average Savings</div>
+          </div>
         </div>
       </div>
-      <div class="hero-visual" id="heroVisual">
-        <div style="display:flex;align-items:center;justify-content:center;height:240px;color:rgba(255,255,255,.5);font-size:13px;">Loading...</div>
+
+      <div class="hero-visual">
+        <div class="hero-card fade-up fade-up-2">
+          <div class="hero-card-top">
+            <div class="hero-card-img"></div>
+            <div>
+              <div class="hero-card-title">Gray's Anatomy Book</div>
+              <div class="hero-card-sub">42nd Edition — Excellent Condition</div>
+            </div>
+            <span class="badge badge-donate" style="margin-right:auto;">Donate</span>
+          </div>
+          <div class="hero-card-footer">
+            <div class="hero-card-user">
+              <div class="avatar" style="width:28px;height:28px;font-size:10px;">FA</div>
+              <span class="hero-card-username">Fatima Ahmed</span>
+            </div>
+            <span class="hero-stars">★ 4.9</span>
+          </div>
+        </div>
+
+        <div class="hero-card fade-up fade-up-3">
+          <div class="hero-card-top">
+            <div class="hero-card-img"></div>
+            <div>
+              <div class="hero-card-title">AutoCAD 2024 License</div>
+              <div class="hero-card-sub">Engineering Field</div>
+            </div>
+            <span class="badge badge-urgent" style="margin-right:auto;"> Urgent</span>
+          </div>
+          <div class="hero-card-footer">
+            <div class="hero-card-user">
+              <div class="avatar" style="width:28px;height:28px;font-size:10px;">MM</div>
+              <span class="hero-card-username">Mohamed Mahmoud</span>
+            </div>
+            <span class="hero-stars">★ 4.6</span>
+          </div>
+        </div>
+
+        <div class="hero-card fade-up fade-up-4">
+          <div class="hero-card-top">
+            <div class="hero-card-img"></div>
+            <div>
+              <div class="hero-card-title">Littmann Stethoscope</div>
+              <div class="hero-card-sub">For First Year</div>
+            </div>
+            <span class="badge badge-swap" style="margin-right:auto;">Swap</span>
+          </div>
+          <div class="hero-card-footer">
+            <div class="hero-card-user">
+              <div class="avatar" style="width:28px;height:28px;font-size:10px;">SA</div>
+              <span class="hero-card-username">Sara Ali</span>
+            </div>
+            <span class="hero-stars">★ 4.7</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -57,10 +144,10 @@
 <div class="stats-bar">
   <div class="container">
     <div class="stats-inner">
-      <div class="stat-item"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Active Listings</div></div>
-      <div class="stat-item"><div class="stat-num" id="statMed">—</div><div class="stat-label">Medical</div></div>
-      <div class="stat-item"><div class="stat-num" id="statEng">—</div><div class="stat-label">Engineering</div></div>
-      <div class="stat-item"><div class="stat-num" id="statArts">—</div><div class="stat-label">Humanities</div></div>
+      <div class="stat-item"><div class="stat-num">2000+</div><div class="stat-label">Registered Students</div></div>
+      <div class="stat-item"><div class="stat-num">850+</div><div class="stat-label">Active Listings</div></div>
+      <div class="stat-item"><div class="stat-num">3 Fields</div><div class="stat-label">Medical · Engineering · Humanities</div></div>
+      <div class="stat-item"><div class="stat-num">60%</div><div class="stat-label">Average Savings</div></div>
     </div>
   </div>
 </div>
@@ -75,22 +162,22 @@
     </div>
     <div class="domains-grid">
       <a href="listings.html?domain=medical" class="domain-card">
-        <div class="domain-icon medical">⚕️</div>
+        <div class="domain-icon medical"></div>
         <div class="domain-title">Medical Field</div>
         <div class="domain-desc">Medical books, examination devices & tools, medical research software</div>
-        <div class="domain-count" id="medCount">Loading...</div>
+        <div class="domain-count">320 Active Listings</div>
       </a>
       <a href="listings.html?domain=eng" class="domain-card">
-        <div class="domain-icon eng">⚙️</div>
+        <div class="domain-icon eng"></div>
         <div class="domain-title">Engineering Field</div>
         <div class="domain-desc">Engineering software, specialized books, tools & equipment</div>
-        <div class="domain-count" id="engCount">Loading...</div>
+        <div class="domain-count">280 Active Listings</div>
       </a>
       <a href="listings.html?domain=arts" class="domain-card">
-        <div class="domain-icon arts">📖</div>
+        <div class="domain-icon arts"></div>
         <div class="domain-title">Humanities Field</div>
         <div class="domain-desc">Literature, language, history, and human sciences books</div>
-        <div class="domain-count" id="artsCount">Loading...</div>
+        <div class="domain-count">190 Active Listings</div>
       </a>
     </div>
   </div>
@@ -103,8 +190,60 @@
       <div class="section-label">Latest Listings</div>
       <h2>See What's Available Now</h2>
     </div>
-    <div class="listings-grid-3" id="latestGrid">
-      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);">Loading listings...</div>
+    <div class="listings-grid-3">
+      <div class="listing-card urgent-card">
+        <div class="card-img"></div>
+        <div class="card-body">
+          <div class="card-badges">
+            <span class="badge badge-swap">Swap</span>
+            <span class="badge badge-urgent"> Urgent</span>
+          </div>
+          <div class="card-title">Gray's Anatomy — 42nd Edition</div>
+          <div class="card-sub">Medical Field · Excellent Condition</div>
+          <div class="card-footer">
+            <div class="card-user">
+              <div class="avatar" style="width:28px;height:28px;font-size:10px;">FA</div>
+              <span class="card-user-name">Fatima Ahmed</span>
+            </div>
+            <span class="card-rating">★ 4.9</span>
+          </div>
+          <a href="listing-detail.html" class="card-btn urgent-btn">Request Now</a>
+        </div>
+      </div>
+
+      <div class="listing-card">
+        <div class="card-img"></div>
+        <div class="card-body">
+          <div class="card-badges"><span class="badge badge-donate">Donate</span></div>
+          <div class="card-title">AutoCAD 2024 — Full Version</div>
+          <div class="card-sub">Engineering Field · Full License</div>
+          <div class="card-footer">
+            <div class="card-user">
+              <div class="avatar" style="width:28px;height:28px;font-size:10px;">MM</div>
+              <span class="card-user-name">Mohamed Mahmoud</span>
+            </div>
+            <span class="card-rating">★ 4.6</span>
+          </div>
+          <a href="listing-detail.html" class="card-btn">Request</a>
+        </div>
+      </div>
+
+      <div class="listing-card">
+        <div class="card-img"></div>
+        <div class="card-body">
+          <div class="card-badges"><span class="badge badge-sell">Sell</span></div>
+          <div class="card-title">Littmann Classic III Stethoscope</div>
+          <div class="card-sub">Medical Field · Like New</div>
+          <div class="card-footer">
+            <div class="card-user">
+              <div class="avatar" style="width:28px;height:28px;font-size:10px;">SA</div>
+              <span class="card-user-name">Sara Ali</span>
+            </div>
+            <span class="card-rating">★ 4.7</span>
+          </div>
+          <a href="listing-detail.html" class="card-btn">Request</a>
+        </div>
+      </div>
     </div>
     <div class="listings-cta">
       <a href="listings.html" class="btn btn-primary">See All Listings →</a>
@@ -121,9 +260,21 @@
       <p>Easier than you think</p>
     </div>
     <div class="steps">
-      <div class="step-card"><div class="step-num">1</div><div class="step-title">Sign Up</div><div class="step-desc">Use your university email — one step, no complications</div></div>
-      <div class="step-card"><div class="step-num">2</div><div class="step-title">Add or Search</div><div class="step-desc">Post your listing or search for what you need in your field</div></div>
-      <div class="step-card"><div class="step-num">3</div><div class="step-title">Exchange & Connect</div><div class="step-desc">Connect with the student and exchange the resource; the transaction is auto-verified</div></div>
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-title">Sign Up</div>
+        <div class="step-desc">Use your university email — one step, no complications</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-title">Add or Search</div>
+        <div class="step-desc">Post your listing or search for what you need in your field</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-title">Exchange & Connect</div>
+        <div class="step-desc">Connect with the student and exchange the resource; the transaction is auto-verified</div>
+      </div>
     </div>
   </div>
 </section>
@@ -132,15 +283,15 @@
 <section class="research-cta">
   <div class="container">
     <div class="research-cta-inner">
-      <div class="research-cta-icon">🔬</div>
+      <div class="research-cta-icon"></div>
       <div class="research-cta-text">
         <h2>Research Hub — Not Just Books</h2>
         <p>Summaries, notes, past exams — everything you need in one place</p>
         <div class="research-tags">
-          <span class="research-tag">📄 Summaries</span>
-          <span class="research-tag">📝 Scanned Notes</span>
-          <span class="research-tag">📋 Past Exams</span>
-          <span class="research-tag">🔬 Research Tools</span>
+          <span class="research-tag">Summaries</span>
+          <span class="research-tag">Scanned Notes</span>
+          <span class="research-tag">Past Exams</span>
+          <span class="research-tag">Research Tools</span>
         </div>
       </div>
       <a href="research-hub.html" class="btn btn-white" style="flex-shrink:0;">Explore Now</a>
@@ -148,128 +299,30 @@
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
   <div class="container">
     <div class="footer-inner">
       <a href="index.html" class="logo">Uni<span>Swap</span></a>
-      <div class="footer-links"><a href="#">About Us</a><a href="#">Contact Us</a><a href="#">Usage Policy</a></div>
-      <div class="footer-copy">UniSwap © 2026 — Web Development Project</div>
+      <div class="footer-links">
+        <a href="#">About Us</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Usage Policy</a>
+      </div>
+      <div class="footer-copy">UniSwap © 2026 — Web Project</div>
     </div>
   </div>
 </footer>
 
 <script>
-document.getElementById('hamburger').addEventListener('click', function() {
-  document.getElementById('mobileNav').classList.toggle('open');
-});
-document.querySelectorAll('#mobileNav a').forEach(function(link) {
-  link.addEventListener('click', function() { document.getElementById('mobileNav').classList.remove('open'); });
-});
-
-if (Auth.isLoggedIn()) {
-  updateNavbar();
-  const user = Auth.getUser();
-  const initials = (user?.name || 'ME').split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('navActions').innerHTML = `
-    <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
-    <a href="dashboard.html" class="avatar" style="width:36px;height:36px;font-size:12px;text-decoration:none;">${initials}</a>
-  `;
-  document.getElementById('mobileActions').innerHTML = `<a href="dashboard.html" class="btn btn-outline">Dashboard</a>`;
-}
-
-async function loadPage() {
-  try {
-    const [medRes, engRes, artsRes] = await Promise.all([
-      ListingsAPI.getAll({ domain: 'medical' }),
-      ListingsAPI.getAll({ domain: 'engineering' }),
-      ListingsAPI.getAll({ domain: 'arts' }),
-    ]);
-    const med  = medRes?.data  || [];
-    const eng  = engRes?.data  || [];
-    const arts = artsRes?.data || [];
-    const total = med.length + eng.length + arts.length;
-
-    document.getElementById('heroTotal').textContent  = total || '—';
-    document.getElementById('statTotal').textContent  = total || '—';
-    document.getElementById('statMed').textContent    = med.length  || '—';
-    document.getElementById('statEng').textContent    = eng.length  || '—';
-    document.getElementById('statArts').textContent   = arts.length || '—';
-    document.getElementById('medCount').textContent   = med.length  + ' Active Listings';
-    document.getElementById('engCount').textContent   = eng.length  + ' Active Listings';
-    document.getElementById('artsCount').textContent  = arts.length + ' Active Listings';
-
-    const all = [...med, ...eng, ...arts]
-      .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 3);
-
-    renderHero(all);
-    renderLatest(all);
-  } catch(e) {
-    document.getElementById('latestGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);">Could not load listings — <a href="listings.html">browse all</a></div>';
-    document.getElementById('heroVisual').innerHTML = '';
-    ['medCount','engCount','artsCount'].forEach(id => document.getElementById(id).textContent = 'Browse listings');
-  }
-}
-
-function renderLatest(listings) {
-  const grid = document.getElementById('latestGrid');
-  if (!listings.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);">No listings yet — <a href="add-listing.html">be the first!</a></div>';
-    return;
-  }
-  grid.innerHTML = '';
-  listings.forEach(l => {
-    const isUrgent = l.is_urgent;
-    const initials = (l.user_id?.name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-    const rating = l.user_id?.trust_points ? (4 + Math.min(l.user_id.trust_points/1000,.9)).toFixed(1) : '4.5';
-    const bc = { donate:'badge-donate', swap:'badge-swap', sell:'badge-sell' }[l.type] || 'badge-donate';
-    grid.innerHTML += `
-      <div class="listing-card${isUrgent?' urgent-card':''}">
-        <div class="card-img">${domainEmoji(l.domain)}</div>
-        <div class="card-body">
-          <div class="card-badges">
-            <span class="badge ${bc}">${l.type.charAt(0).toUpperCase()+l.type.slice(1)}</span>
-            ${isUrgent?'<span class="badge badge-urgent">⚡ Urgent</span>':''}
-          </div>
-          <div class="card-title">${l.title}</div>
-          <div class="card-sub">${l.domain} · ${l.condition}</div>
-          ${l.price?`<div style="font-size:13px;font-weight:700;color:var(--navy);margin:4px 0;">${l.price} EGP</div>`:''}
-          <div class="card-footer">
-            <div class="card-user"><div class="avatar" style="width:28px;height:28px;font-size:10px;">${initials}</div><span class="card-user-name">${l.user_id?.name||'Student'}</span></div>
-            <span class="card-rating">★ ${rating}</span>
-          </div>
-          <a href="listing-detail.html?id=${l._id}" class="card-btn${isUrgent?' urgent-btn':''}">${isUrgent?'Request Now':'Request'}</a>
-        </div>
-      </div>
-    `;
+  document.getElementById('hamburger').addEventListener('click', function() {
+    document.getElementById('mobileNav').classList.toggle('open');
   });
-}
-
-function renderHero(listings) {
-  const visual = document.getElementById('heroVisual');
-  if (!listings.length) { visual.innerHTML = ''; return; }
-  visual.innerHTML = '';
-  listings.slice(0,3).forEach((l,i) => {
-    const initials = (l.user_id?.name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    const rating = l.user_id?.trust_points ? (4+Math.min(l.user_id.trust_points/1000,.9)).toFixed(1) : '4.5';
-    const bc = {donate:'badge-donate',swap:'badge-swap',sell:'badge-sell'}[l.type]||'badge-donate';
-    visual.innerHTML += `
-      <div class="hero-card fade-up fade-up-${i+2}">
-        <div class="hero-card-top">
-          <div class="hero-card-img">${domainEmoji(l.domain)}</div>
-          <div><div class="hero-card-title">${l.title}</div><div class="hero-card-sub">${l.domain} · ${l.condition}</div></div>
-          <span class="badge ${bc}" style="margin-right:auto;">${l.type.charAt(0).toUpperCase()+l.type.slice(1)}</span>
-        </div>
-        <div class="hero-card-footer">
-          <div class="hero-card-user"><div class="avatar" style="width:28px;height:28px;font-size:10px;">${initials}</div><span class="hero-card-username">${l.user_id?.name||'Student'}</span></div>
-          <span class="hero-stars">★ ${rating}</span>
-        </div>
-      </div>
-    `;
+  document.querySelectorAll('#mobileNav a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      document.getElementById('mobileNav').classList.remove('open');
+    });
   });
-}
-
-loadPage();
 </script>
 </body>
 </html>
