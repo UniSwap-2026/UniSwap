@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniSwap — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="api.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">Uni<span>Swap</span></a>
+      <ul class="nav-links">
+        <li><a href="listings.html">Announcements</a></li>        
+        <li><a href="research-hub.html">Research Hub</a></li>
+        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="position:relative;cursor:pointer;" id="notifBell">
+          <span style="font-size:20px;cursor:pointer;" onclick="window.location='messages.html'">🔔</span>
+          <span id="notifBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#e24b4a;color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 3px;"></span>
+        </div>
+        <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
+       </div>
+    </div>
+  </div>  
+ </nav>
+
+<div class="dash-layout">
+  <!-- Sidebar -->
+  <aside class="dash-sidebar">
+    <div class="dash-nav-section">Menu</div>
+    <a href="dashboard.html" class="dash-nav-item active"><span class="nav-icon">⊞</span> Dashboard</a>
+    <a href="add-listing.html" class="dash-nav-item"><span class="nav-icon">＋</span> Add Listing</a>
+    <a href="listings.html" class="dash-nav-item"><span class="nav-icon">☰</span> Browse Listings</a>
+    <a href="messages.html" class="dash-nav-item"><span class="nav-icon">✉</span> Messages <span class="dash-nav-badge" id="msgBadge" style="display:none;"></span></a>
+    <div class="dash-nav-divider"></div>
+    <div class="dash-nav-section">Platform</div>
+    <a href="needs-board.html" class="dash-nav-item" style="color:var(--green);"><span class="nav-icon">◎</span> Needs Board <span class="dash-nav-badge green">New</span></a>
+    <a href="research-hub.html" class="dash-nav-item"><span class="nav-icon">🔬</span> Research Hub</a>
+    <div class="dash-nav-divider"></div>
+    <a href="login.html" class="dash-nav-item" style="color:var(--text3);margin-top:auto;" onclick="Auth.logout()"><span class="nav-icon">⇥</span> Logout</a>
+  </aside>
+
+  <!-- Content -->
+  <main class="dash-content">
+
+    <!-- Welcome -->
+    <div class="dash-welcome">
+      <h1 id="welcomeMsg">Welcome 👋</h1>
+      <p id="welcomeDate"></p>
+    </div>
+
+    <!-- Smart match alert -->
+    <div class="match-alert" id="matchAlert" style="display:none;">
+      <div class="match-alert-icon">✓</div>
+      <div class="match-alert-text">
+        <strong>New Smart Match!</strong>
+        <span id="matchText"></span>
+      </div>
+      <a href="messages.html" class="btn btn-ghost btn-sm" style="flex-shrink:0;">View Details</a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid-4">
+      <div class="stat-card"><div class="stat-card-num" id="statListings">—</div><div class="stat-card-label">My Listings</div></div>
+      <div class="stat-card"><div class="stat-card-num" id="statPending">—</div><div class="stat-card-label">Pending Requests</div></div>
+      <div class="stat-card"><div class="stat-card-num" id="statDone">—</div><div class="stat-card-label">Completed Trades</div></div>
+      <div class="stat-card trust"><div class="stat-card-num" id="statTrust">— ★</div><div class="stat-card-label">Trust Points</div></div>
+    </div>
+
+    <div class="dash-grid-2">
+      <!-- My listings -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <span class="dash-card-title">Recent Listings</span>
+          <a href="add-listing.html" class="btn btn-primary btn-sm">+ New</a>
+        </div>
+        <div id="myListingsRows">
+          <div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
+        </div>
+        <div class="dash-card-footer"><a href="listings.html">Browse all listings →</a></div>
+      </div>
+
+      <!-- Requests -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <span class="dash-card-title">Recent Requests</span>
+          <div id="reqCountBadges" style="display:flex;gap:6px;"></div>
+        </div>
+        <div id="myRequestRows">
+          <div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
+        </div>
+        <div class="dash-card-footer"><a href="messages.html">Go to messages →</a></div>
+      </div>
+    </div>
+
+    <div class="dash-grid-2">
+      <!-- Messages -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <span class="dash-card-title">Recent Messages</span>
+          <span class="badge badge-sell" id="unreadBadge" style="font-size:11px;display:none;"></span>
+        </div>
+        <div id="msgRows">
+          <div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
+        </div>
+        <div class="dash-card-footer"><a href="messages.html">View all messages →</a></div>
+      </div>
+
+      <!-- Browse domains -->
+      <div class="dash-card">
+        <div class="dash-card-header"><span class="dash-card-title">Browse Domains</span></div>
+        <a href="listings.html?domain=medical" style="text-decoration:none;">
+          <div class="dash-row" style="cursor:pointer;">
+            <div class="dash-row-img" style="background:var(--blue-lt);">⚕️</div>
+            <div class="dash-row-text"><div class="dash-row-title">Medical Domain</div><div class="dash-row-sub" id="dMed">Loading...</div></div>
+            <span style="color:var(--text3);font-size:13px;">→</span>
+          </div>
+        </a>
+        <a href="listings.html?domain=eng" style="text-decoration:none;">
+          <div class="dash-row" style="cursor:pointer;">
+            <div class="dash-row-img" style="background:var(--amber-lt);">⚙️</div>
+            <div class="dash-row-text"><div class="dash-row-title">Engineering Domain</div><div class="dash-row-sub" id="dEng">Loading...</div></div>
+            <span style="color:var(--text3);font-size:13px;">→</span>
+          </div>
+        </a>
+        <a href="listings.html?domain=arts" style="text-decoration:none;">
+          <div class="dash-row" style="cursor:pointer;">
+            <div class="dash-row-img" style="background:var(--purple-lt);">📖</div>
+            <div class="dash-row-text"><div class="dash-row-title">Humanities Domain</div><div class="dash-row-sub" id="dArts">Loading...</div></div>
+            <span style="color:var(--text3);font-size:13px;">→</span>
+          </div>
+        </a>
+        <div class="dash-card-footer"><a href="research-hub.html">Research Hub →</a></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+requireAuth();
+
+/* hamburger — only attach if element exists (mobile nav may be in a separate include) */
+const _hamburger = document.getElementById('hamburger');
+if (_hamburger) {
+  _hamburger.addEventListener('click', function() {
+    const nav = document.getElementById('mobileNav');
+    if (nav) nav.classList.toggle('open');
+  });
+}
+
+/* ── Helper: domain emoji ── */
+function domainEmoji(domain) {
+  if (!domain) return '📄';
+  const d = domain.toLowerCase();
+  if (d.includes('med'))  return '⚕️';
+  if (d.includes('eng'))  return '⚙️';
+  if (d.includes('art') || d.includes('human')) return '📖';
+  if (d.includes('sci'))  return '🔬';
+  if (d.includes('law'))  return '⚖️';
+  if (d.includes('bus') || d.includes('econ'))  return '💼';
+  return '📄';
+}
+
+/* ── Helper: human-readable time ── */
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1)  return 'Just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  const dy = Math.floor(h / 24);
+  if (dy < 7) return dy + 'd ago';
+  return new Date(dateStr).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+
+/* Date */
+const now = new Date();
+document.getElementById('welcomeDate').textContent = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ' — What\'s new today?';
+
+async function loadDashboard() {
+  const user = Auth.getUser();
+  if (user) {
+    const firstName = user.name.split(' ')[0];
+    document.getElementById('welcomeMsg').textContent = `Welcome ${firstName} 👋`;
+    const initials = user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('navAvatar').textContent = initials;
+  }
+
+  try {
+    /* Stats */
+    const stats = await DashboardAPI.getStats();
+    if (stats?.data) {
+      const d = stats.data;
+      document.getElementById('statListings').textContent = d.listings_count ?? 0;
+      document.getElementById('statPending').textContent  = d.pending_requests ?? 0;
+      document.getElementById('statDone').textContent     = d.completed_trades ?? 0;
+      document.getElementById('statTrust').textContent    = (d.trust_points ?? 0) + ' ★';
+    }
+  } catch(e) {}
+
+  try {
+    /* Notifications */
+    const notif = await DashboardAPI.getNotifications();
+    const unread = (notif?.data || []).filter(n => !n.is_read).length;
+    if (unread) {
+      const badge = document.getElementById('notifBadge');
+      badge.textContent = unread;
+      badge.style.display = 'flex';
+    }
+  } catch(e) {}
+
+  try {
+    /* My Listings */
+    const listings = await ListingsAPI.getMy();
+    renderMyListings(listings?.data || []);
+  } catch(e) { document.getElementById('myListingsRows').innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No listings yet — <a href="add-listing.html">add one!</a></div>'; }
+
+  try {
+    /* My Requests */
+    const requests = await RequestsAPI.getMy();
+    renderMyRequests(requests?.data || []);
+  } catch(e) { document.getElementById('myRequestRows').innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No requests yet</div>'; }
+
+  try {
+    /* Messages */
+    const msgs = await MessagesAPI.getAll();
+    renderMessages(msgs?.data || []);
+  } catch(e) { document.getElementById('msgRows').innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No messages yet</div>'; }
+
+  try {
+    /* Domain counts */
+    const [medRes, engRes, artsRes] = await Promise.all([
+      ListingsAPI.getAll({ domain:'medical' }),
+      ListingsAPI.getAll({ domain:'engineering' }),
+      ListingsAPI.getAll({ domain:'arts' }),
+    ]);
+    document.getElementById('dMed').textContent  = (medRes?.data?.length  || 0) + ' Active Listings';
+    document.getElementById('dEng').textContent  = (engRes?.data?.length  || 0) + ' Active Listings';
+    document.getElementById('dArts').textContent = (artsRes?.data?.length || 0) + ' Active Listings';
+  } catch(e) {
+    ['dMed','dEng','dArts'].forEach(id => document.getElementById(id).textContent = 'Browse listings');
+  }
+}
+
+function renderMyListings(listings) {
+  const container = document.getElementById('myListingsRows');
+  if (!listings.length) {
+    container.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No listings yet — <a href="add-listing.html">add one!</a></div>';
+    return;
+  }
+  container.innerHTML = '';
+  listings.slice(0,3).forEach(l => {
+    const badge = l.is_urgent
+      ? '<span class="badge badge-urgent">⚡ Urgent</span>'
+      : `<span class="badge badge-available">${l.status || 'Active'}</span>`;
+    container.innerHTML += `
+      <div class="dash-row" style="cursor:pointer;" onclick="window.location='listing-detail.html?id=${l._id}'">
+        <div class="dash-row-img">${domainEmoji(l.domain)}</div>
+        <div class="dash-row-text">
+          <div class="dash-row-title">${l.title}</div>
+          <div class="dash-row-sub">${l.type} · ${l.domain}</div>
+        </div>
+        ${badge}
+      </div>
+    `;
+  });
+}
+
+function renderMyRequests(requests) {
+  const container = document.getElementById('myRequestRows');
+  if (!requests.length) {
+    container.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No requests yet</div>';
+    return;
+  }
+  const incoming = requests.filter(r => r.direction === 'incoming').length;
+  const outgoing = requests.filter(r => r.direction !== 'incoming').length;
+  const badgesEl = document.getElementById('reqCountBadges');
+  if (incoming) badgesEl.innerHTML += `<span class="badge badge-swap" style="font-size:11px;">Incoming ${incoming}</span>`;
+  if (outgoing) badgesEl.innerHTML += `<span class="badge badge-medical" style="font-size:11px;">Outgoing ${outgoing}</span>`;
+
+  const dotColors = { accepted:'var(--teal)', pending:'var(--amber)', rejected:'#e24b4a', done:'var(--green)' };
+  const badgeMap = {
+    accepted: '<span class="badge badge-available">Accepted</span>',
+    pending:  '<span class="badge badge-swap" style="background:var(--amber-lt);color:var(--amber);">Pending</span>',
+    rejected: '<span class="badge badge-sell">Rejected</span>',
+    done:     '<span class="badge badge-available">Done ✓</span>',
+  };
+
+  container.innerHTML = '';
+  requests.slice(0,3).forEach(r => {
+    const listing   = r.listing_id;
+    const otherUser = r.requester_id;
+    container.innerHTML += `
+      <div class="dash-row">
+        <div style="width:8px;height:8px;border-radius:50%;background:${dotColors[r.status]||'var(--border)'};flex-shrink:0;"></div>
+        <div class="dash-row-text">
+          <div class="dash-row-title">${listing?.title || 'Listing'}</div>
+          <div class="dash-row-sub">From: ${otherUser?.name || 'Student'}</div>
+        </div>
+        ${badgeMap[r.status] || ''}
+      </div>
+    `;
+  });
+}
+
+function renderMessages(conversations) {
+  const container = document.getElementById('msgRows');
+  const unread = conversations.filter(c => c.unread_count > 0).length;
+  if (unread) {
+    const b = document.getElementById('unreadBadge');
+    b.textContent = unread + ' Unread';
+    b.style.display = '';
+    const mb = document.getElementById('msgBadge');
+    mb.textContent = unread;
+    mb.style.display = '';
+  }
+  if (!conversations.length) {
+    container.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No messages yet</div>';
+    return;
+  }
+  container.innerHTML = '';
+  conversations.slice(0,2).forEach(conv => {
+    const other = conv.other_user;
+    const initials = (other?.name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const unreadDot = conv.unread_count > 0 ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></div>' : '';
+    container.innerHTML += `
+      <div class="dash-row" style="cursor:pointer;" onclick="window.location='messages.html'">
+        <div class="avatar" style="width:36px;height:36px;font-size:12px;">${initials}</div>
+        <div class="dash-row-text">
+          <div class="dash-row-title">${other?.name||'Student'}</div>
+          <div class="dash-row-sub">${conv.last_message||'...'}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          <span style="font-size:10px;color:var(--text3);">${timeAgo(conv.updatedAt)}</span>
+          ${unreadDot}
+        </div>
+      </div>
+    `;
+  });
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
