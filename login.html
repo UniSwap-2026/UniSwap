@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniSwap — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="api.js"></script>
+</head>
+<body class="auth-page">
+
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">Uni<span>Swap</span></a>
+      <div style="flex:1;"></div>
+      <a href="index.html" class="btn btn-ghost btn-sm">Back to Home</a>
+    </div>
+  </div>
+</nav>
+<div class="auth-body">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="index.html" class="logo" style="font-size:26px;">Uni<span>Swap</span></a>
+      <p style="font-size:13px;color:var(--text3);margin-top:6px;">Academic Exchange Platform</p>
+    </div>
+
+    <div class="auth-form active">
+      <div class="form-group">
+        <label class="form-label">University Email</label>
+        <input type="email" class="form-input" id="loginEmail" placeholder="example@university.edu.eg" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2);">
+          <input type="checkbox" style="accent-color:var(--navy);"> Remember me
+        </label>
+      </div>
+      <button class="btn btn-primary btn-full" id="loginBtn" onclick="doLogin()">Login</button>
+      <div class="auth-note">Only university emails accepted — @university.edu.eg</div>
+      <div class="auth-footer-text">Don't have an account? <a href="signup.html">Create Account</a></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+if (Auth.isLoggedIn()) window.location.href = 'dashboard.html';
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value.trim();
+  if (!email || !pass) { showToast('Please enter email and password', 'error'); return; }
+
+  const btn = document.getElementById('loginBtn');
+  btn.textContent = 'Logging in...';
+  btn.disabled = true;
+
+  try {
+    await AuthAPI.login(email, pass);
+    showToast('Welcome back! Redirecting...');
+    setTimeout(() => window.location.href = 'dashboard.html', 800);
+  } catch(err) {
+    showToast(err.message || 'Login failed — check your email and password', 'error');
+    btn.textContent = 'Login';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
