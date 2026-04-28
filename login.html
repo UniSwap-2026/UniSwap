@@ -55,6 +55,15 @@
 <script>
 if (Auth.isLoggedIn()) window.location.href = 'dashboard.html';
 
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.className = 'toast' + (type === 'error' ? ' toast-error' : ' toast-success');
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pass  = document.getElementById('loginPass').value.trim();
