@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniSwap — Messages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="api.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">Uni<span>Swap</span></a>
+      <ul class="nav-links">
+        <li><a href="listings.html">Announcements</a></li>                
+        <li><a href="research-hub.html">Research Hub</a></li>
+        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
+      </ul>
+       <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
+
+    </div>
+  </div>
+</nav>
+
+<div class="messages-page">
+
+  <!-- Sidebar -->
+  <div class="msg-sidebar">
+    <div class="msg-sidebar-head">
+      <h2>Messages</h2>
+      <input type="text" class="msg-search" id="msgSearch" placeholder="🔍 Search messages..." oninput="filterConvs()">
+    </div>
+    <div class="msg-list" id="convList">
+      <div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
+    </div>
+  </div>
+
+  <!-- Main chat -->
+  <div class="msg-main" id="msgMain">
+    <!-- Empty state -->
+    <div id="emptyState" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:12px;">
+      <div style="font-size:48px;">💬</div>
+      <p style="font-size:14px;">Select a conversation to start chatting</p>
+    </div>
+
+    <!-- Chat area (hidden initially) -->
+    <div id="chatArea" style="display:none;flex-direction:column;height:100%;">
+      <div class="msg-main-head">
+        <div class="avatar" style="width:40px;height:40px;font-size:13px;" id="chatAvatar">—</div>
+        <div>
+          <div class="msg-main-head-name" id="chatName">—</div>
+          <div class="msg-main-head-sub" id="chatSub">—</div>
+        </div>
+        <div style="margin-right:auto;display:flex;gap:8px;align-items:center;">
+          <span class="badge badge-swap" id="chatStatus" style="font-size:11px;">Active</span>
+          <button class="btn btn-primary btn-sm" onclick="confirmReceipt()">Confirm receipt ✓</button>
+        </div>
+      </div>
+
+      <div class="msg-body" id="msgBody"></div>
+
+      <!-- Exchange code -->
+      <div class="code-section">
+        <div class="code-section-title">Exchange confirmation code</div>
+        <div class="code-grid">
+          <div class="code-box">
+            <div class="code-box-label">Your code — give this to the other party</div>
+            <div class="code-display" id="myCode">—</div>
+            <div class="code-expiry">Valid for 24 hours</div>
+          </div>
+          <div>
+            <div class="code-box-label" style="font-size:12px;color:var(--text2);margin-bottom:8px;">Enter the other party's code</div>
+            <input type="text" class="code-input" id="codeInput" placeholder="_ _ _ - _ _ _" maxlength="7">
+            <button class="btn btn-primary btn-full btn-sm" onclick="confirmCode()">Confirm exchange ✓</button>
+            <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px;">After exchanging both codes, the transaction completes automatically</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="msg-footer">
+        <input type="text" id="msgInput" placeholder="Type your message..." onkeydown="if(event.key==='Enter')sendMsg()">
+        <button class="btn btn-primary btn-sm" onclick="sendMsg()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+requireAuth();
+
+/* ── Mobile nav (only if elements exist) ── */
+const _hamburger = document.getElementById('hamburger');
+if (_hamburger) {
+  _hamburger.addEventListener('click', function() {
+    const nav = document.getElementById('mobileNav');
+    if (nav) nav.classList.toggle('open');
+  });
+}
+
+/* ── Helper: human-readable time ── */
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1)  return 'Just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  const dy = Math.floor(h / 24);
+  if (dy < 7) return dy + 'd ago';
+  return new Date(dateStr).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+
+/* ── Helper: toast notification ── */
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.className = 'toast' + (type === 'error' ? ' toast-error' : ' toast-success');
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+
+/* Set avatar */
+const user = Auth.getUser();
+if (user) {
+  const initials = user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('navAvatar').textContent = initials;
+}
+
+var activeRequestId = null;
+var allConvs        = [];
+
+async function loadConversations() {
+  const list = document.getElementById('convList');
+  try {
+    const res  = await MessagesAPI.getAll();
+    allConvs   = res?.data || [];
+
+    if (!allConvs.length) {
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">No conversations yet.<br><a href="listings.html">Browse listings</a> to connect.</div>';
+      return;
+    }
+
+    renderConvList(allConvs);
+
+    /* auto-open first */
+    if (allConvs[0]) openChat(allConvs[0].request_id, allConvs[0].other_user, allConvs[0].listing_title, allConvs[0].my_code);
+
+  } catch(err) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">Could not load conversations</div>';
+  }
+}
+
+function renderConvList(convs) {
+  const list = document.getElementById('convList');
+  list.innerHTML = '';
+  convs.forEach((conv, i) => {
+    const other    = conv.other_user || {};
+    const initials = (other.name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const unread   = conv.unread_count > 0;
+    const item     = document.createElement('div');
+    item.className = 'msg-item' + (i === 0 ? ' active' : '');
+    item.dataset.requestId = conv.request_id;
+    item.dataset.name = (other.name||'').toLowerCase();
+    item.innerHTML = `
+      <div class="avatar" style="width:40px;height:40px;font-size:13px;">${initials}</div>
+      <div class="msg-item-body">
+        <div class="msg-item-top">
+          <span class="msg-item-name">${other.name||'Student'}</span>
+          <span class="msg-item-time">${timeAgo(conv.updatedAt)}</span>
+        </div>
+        <div class="msg-item-preview">${conv.last_message||'...'}</div>
+      </div>
+      ${unread ? '<div class="msg-unread-dot"></div>' : ''}
+    `;
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.msg-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      const dot = item.querySelector('.msg-unread-dot');
+      if (dot) dot.remove();
+      openChat(conv.request_id, other, conv.listing_title, conv.my_code);
+    });
+    list.appendChild(item);
+  });
+}
+
+function filterConvs() {
+  const val = document.getElementById('msgSearch').value.trim().toLowerCase();
+  document.querySelectorAll('.msg-item').forEach(item => {
+    const name = item.dataset.name || '';
+    item.style.display = (!val || name.includes(val)) ? '' : 'none';
+  });
+}
+
+async function openChat(requestId, otherUser, listingTitle, myCode) {
+  activeRequestId = requestId;
+  const initials = (otherUser?.name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('chatAvatar').textContent = initials;
+  document.getElementById('chatName').textContent   = otherUser?.name || 'Student';
+  document.getElementById('chatSub').textContent    = `Regarding: ${listingTitle || 'listing'}`;
+  document.getElementById('myCode').textContent     = myCode || '—';
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('chatArea').style.display    = 'flex';
+
+  try {
+    const res  = await MessagesAPI.getByRequest(requestId);
+    const msgs = res?.data || [];
+    const body = document.getElementById('msgBody');
+    const myId = Auth.getUser()?._id;
+
+    body.innerHTML = '';
+    if (!msgs.length) {
+      body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">No messages yet — say hi!</div>';
+    } else {
+      msgs.forEach(m => {
+        const isMine = m.sender_id === myId || m.sender_id?._id === myId;
+        body.insertAdjacentHTML('beforeend', `
+          <div class="msg-bubble-wrap ${isMine?'sent':'recv'}">
+            <div class="msg-bubble ${isMine?'sent':'recv'}">${m.body}</div>
+          </div>
+        `);
+      });
+    }
+    body.scrollTop = body.scrollHeight;
+  } catch(err) {
+    console.warn('Could not load messages:', err.message);
+  }
+}
+
+async function sendMsg() {
+  const input = document.getElementById('msgInput');
+  const text  = input.value.trim();
+  if (!text || !activeRequestId) return;
+  try {
+    await MessagesAPI.send(activeRequestId, text);
+    const body = document.getElementById('msgBody');
+    body.querySelector('[style*="No messages"]')?.remove();
+    body.insertAdjacentHTML('beforeend', `
+      <div class="msg-bubble-wrap sent"><div class="msg-bubble sent">${text}</div></div>
+    `);
+    input.value = '';
+    body.scrollTop = body.scrollHeight;
+  } catch(err) {
+    showToast(err.message || 'Failed to send message', 'error');
+  }
+}
+
+async function confirmCode() {
+  const code = document.getElementById('codeInput').value.trim();
+  if (!code)            { showToast('Please enter the other party\'s code', 'error'); return; }
+  if (!activeRequestId) return;
+  try {
+    await RequestsAPI.confirm(activeRequestId, code);
+    showToast('✓ Exchange confirmed! Transaction completed.');
+    document.getElementById('chatStatus').textContent = 'Completed ✓';
+  } catch(err) {
+    showToast(err.message || 'Invalid code — try again', 'error');
+  }
+}
+
+function confirmReceipt() {
+  showToast('✓ Receipt confirmed — rate your experience from your profile');
+}
+
+loadConversations();
+</script>
+</body>
+</html>
