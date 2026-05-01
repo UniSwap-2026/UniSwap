@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniSwap — Announcements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">Uni<span>Swap</span></a>
+      <ul class="nav-links">
+        <li><a href="listings.html">Announcements</a></li>
+        <li><a href="research-hub.html">Research Hub</a></li>
+        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- DOMAIN HEADER -->
+<div class="domain-header">
+  <div class="container">
+    <div class="domain-header-inner">
+      <div class="domain-icon-big" id="domainIcon">⚕️</div>
+      <div class="domain-title-wrap">
+        <h1 id="domainTitle">Medical Field</h1>
+        <p id="domainDesc">Books & References · Medical Devices</p>
+      </div>
+      <div class="domain-badges">
+        <span class="domain-badge" id="totalBadge">0 ads</span>
+        <span class="domain-badge urgent" id="urgentBadge">0 urgent</span>
+      </div>
+    </div>
+    <div class="domain-search">
+       <input type="text" id="searchInput" placeholder="Search in Medical field...">
+    </div>
+    <div class="domain-tabs">
+      <button class="domain-tab active" data-domain="medical">Medical</button>
+      <button class="domain-tab" data-domain="eng">Engineering</button>
+      <button class="domain-tab" data-domain="arts">Arts</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE BODY -->
+<div class="container">
+  <div class="page-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div id="activeFiltersWrap" style="display:none;margin-bottom:16px;">
+        <div class="sidebar-label">Active Filters</div>
+        <div class="active-filters" id="activeFiltersList"></div>
+        <button class="clear-all" id="clearAll">Clear All</button>
+        <div style="height:1px;background:var(--border);margin-top:12px;"></div>
+      </div>
+
+      <!-- نوع التبادل -->
+      <div class="sidebar-section">
+        <div class="sidebar-label">Exchange Type</div>
+        <div class="type-chips">
+          <button class="type-chip donate active" data-type="all">
+            <span class="type-chip-dot" style="background:#ccc;"></span>
+            All
+          </button>
+          <button class="type-chip donate" data-type="donate">
+            <span class="type-chip-dot"></span>
+            Donate — Free
+          </button>
+          <button class="type-chip swap" data-type="swap">
+            <span class="type-chip-dot"></span>
+            Swap
+          </button>
+          <button class="type-chip sell" data-type="sell">
+            <span class="type-chip-dot"></span>
+            Sell
+          </button>
+        </div>
+      </div>
+
+      <!-- مفتاح الإعلانات العاجلة -->
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Quick Filter</div>
+        <button class="sidebar-option" id="urgentToggle" data-urgent="false">
+          <span class="opt-dot"></span>
+          Urgent
+        </button>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <main>
+      <div class="content-header">
+        <div class="results-count">
+          Showing <strong id="shownCount">0</strong> of <strong id="totalAdsCount">0</strong> ads
+        </div>
+        <!-- قائمة الفرز (تمت إضافتها مجدداً) -->
+        <select class="sort-select" id="sortSelect">
+          <option value="newest">Newest first</option>
+          <option value="rating">Highest rated</option>
+          <option value="urgent">Urgent first</option>
+        </select>
+      </div>
+
+      <div class="listings-grid" id="listingsGrid">
+        <!-- رسالة عدم وجود نتائج -->
+        <div class="no-results" id="noResults">
+          <div class="no-results-icon">🔍</div>
+          <h3>No results found</h3>
+          <p>Try changing the filter or search with another keyword</p>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <a href="index.html" class="logo">Uni<span>Swap</span></a>
+      <div class="footer-links">
+        <a href="#">About Us</a><a href="#">Contact Us</a><a href="#">Usage Policy</a>
+      </div>
+      <div class="footer-copy">UniSwap © 2026 — Graduation Project</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// بيانات التخصصات (للأيقونة والعنوان والوصف فقط)
+var domainData = {
+  medical: { icon: '⚕️', title: 'Medical Field',    desc: 'Books & References · Medical Devices' },
+  eng:     { icon: '⚙️', title: 'Engineering Field',  desc: 'Engineering Software · Specialized Books · Tools & Equipment' },
+  arts:    { icon: '📖', title: 'Arts Field',    desc: 'Literature, Language, History & Humanities Books' }
+};
+
+// قراءة التخصص من الرابط
+var urlParam = new URLSearchParams(window.location.search).get('domain');
+var validDomains = ['medical', 'eng', 'arts'];
+var currentDomain = (urlParam && validDomains.includes(urlParam)) ? urlParam : 'medical';
+var currentType = 'all';       // نوع التبادل الحالي
+var urgentOnly = false;        // هل فلتر العاجل مُفعّل؟
+var currentSort = 'newest';    // خيار الترتيب الحالي
+
+// ---------- دوال مساعدة ----------
+function getAllCards() {
+  return document.querySelectorAll('.listing-card');
+}
+
+function countCardsByDomain(domain) {
+  return Array.from(getAllCards()).filter(function(card) {
+    return card.dataset.domain === domain;
+  }).length;
+}
+
+function countUrgentByDomain(domain) {
+  return Array.from(getAllCards()).filter(function(card) {
+    return card.dataset.domain === domain && card.dataset.urgent === 'true';
+  }).length;
+}
+
+// ---------- ترتيب البطاقات ----------
+function sortCards() {
+  var grid = document.getElementById('listingsGrid');
+  var cards = Array.from(getAllCards());
+
+  if (cards.length === 0) return;
+
+  // فرز البطاقات حسب الخيار المحدد
+  cards.sort(function(a, b) {
+    if (currentSort === 'newest') {
+      var dateA = a.dataset.date ? new Date(a.dataset.date).getTime() : 0;
+      var dateB = b.dataset.date ? new Date(b.dataset.date).getTime() : 0;
+      return dateB - dateA; // الأحدث أولاً
+    } else if (currentSort === 'rating') {
+      var ratingA = parseFloat(a.dataset.rating) || 0;
+      var ratingB = parseFloat(b.dataset.rating) || 0;
+      return ratingB - ratingA; // الأعلى تقييماً أولاً
+    } else if (currentSort === 'urgent') {
+      // العاجل أولاً، ثم الأحدث
+      var urgentA = a.dataset.urgent === 'true' ? 1 : 0;
+      var urgentB = b.dataset.urgent === 'true' ? 1 : 0;
+      if (urgentA !== urgentB) return urgentB - urgentA;
+      var dateA = a.dataset.date ? new Date(a.dataset.date).getTime() : 0;
+      var dateB = b.dataset.date ? new Date(b.dataset.date).getTime() : 0;
+      return dateB - dateA;
+    }
+    return 0;
+  });
+
+  // إعادة ترتيب العناصر في الـ DOM (مع الحفاظ على عنصر noResults)
+  // نزيل كل البطاقات من الشبكة ثم نضيفها بعد ترتيبها
+  cards.forEach(function(card) {
+    grid.appendChild(card); // appendChild ينقل العنصر تلقائياً
+  });
+}
+
+// ---------- تغيير التخصص ----------
+function switchDomain(domain) {
+  currentDomain = domain;
+
+  document.querySelectorAll('.domain-tab').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  var activeTab = document.querySelector('.domain-tab[data-domain="' + domain + '"]');
+  if (activeTab) activeTab.classList.add('active');
+
+  var d = domainData[domain];
+  if (d) {
+    document.getElementById('domainIcon').textContent = d.icon;
+    document.getElementById('domainTitle').textContent = d.title;
+    document.getElementById('domainDesc').textContent = d.desc;
+    document.getElementById('searchInput').placeholder = 'Search in ' + d.title + '...';
+  }
+
+  updateCounters();
+  applyFilters();
+}
+
+function updateCounters() {
+  var total = countCardsByDomain(currentDomain);
+  var urgent = countUrgentByDomain(currentDomain);
+  document.getElementById('totalBadge').textContent = total + ' ads';
+  document.getElementById('urgentBadge').textContent = urgent + ' urgent';
+}
+
+// ---------- فلترة الكروت ----------
+function applyFilters() {
+  var searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+  var cards = getAllCards();
+  var shown = 0;
+
+  cards.forEach(function(card) {
+    var domainMatch = (card.dataset.domain === currentDomain);
+    var typeMatch = (currentType === 'all') || (card.dataset.type === currentType);
+    var urgentMatch = !urgentOnly || (card.dataset.urgent === 'true');
+    var title = card.querySelector('.card-title') ? card.querySelector('.card-title').textContent.toLowerCase() : '';
+    var searchMatch = !searchVal || title.includes(searchVal);
+
+    if (domainMatch && typeMatch && urgentMatch && searchMatch) {
+      card.style.display = '';
+      shown++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // ترتيب البطاقات حسب الخيار الحالي
+  sortCards();
+
+  document.getElementById('shownCount').textContent = shown;
+  var totalForDomain = countCardsByDomain(currentDomain);
+  document.getElementById('totalAdsCount').textContent = totalForDomain;
+
+  document.getElementById('noResults').classList.toggle('show', shown === 0);
+}
+
+// ---------- مستمعو الأحداث ----------
+
+// تبويبات التخصص
+document.querySelectorAll('.domain-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    switchDomain(this.dataset.domain);
+  });
+});
+
+// أزرار نوع التبادل
+document.querySelectorAll('.type-chip').forEach(function(chip) {
+  chip.addEventListener('click', function() {
+    currentType = this.dataset.type;
+    document.querySelectorAll('.type-chip').forEach(function(c) { c.classList.remove('active'); });
+    this.classList.add('active');
+    applyFilters();
+    updateActiveFiltersUI();
+  });
+});
+
+// زر "Urgent only"
+document.getElementById('urgentToggle').addEventListener('click', function() {
+  urgentOnly = !urgentOnly;
+  this.classList.toggle('active', urgentOnly);
+  this.setAttribute('data-urgent', urgentOnly ? 'true' : 'false');
+  applyFilters();
+  updateActiveFiltersUI();
+});
+
+// قائمة الفرز
+document.getElementById('sortSelect').addEventListener('change', function() {
+  currentSort = this.value;
+  applyFilters(); // إعادة تطبيق الفلترة مع الفرز الجديد
+});
+
+// البحث
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+// ---------- واجهة الفلاتر النشطة ----------
+function updateActiveFiltersUI() {
+  var wrap = document.getElementById('activeFiltersWrap');
+  var list = document.getElementById('activeFiltersList');
+  var tags = [];
+
+  if (currentType !== 'all') {
+    var labels = { donate: 'Donate', swap: 'Swap', sell: 'Sell' };
+    tags.push(labels[currentType]);
+  }
+
+  if (urgentOnly) {
+    tags.push('Urgent');
+  }
+
+  if (tags.length > 0) {
+    wrap.style.display = '';
+    list.innerHTML = tags.map(function(t) {
+      return '<span class="active-filter-tag">' + t + '</span>';
+    }).join('');
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+// زر Clear All
+document.getElementById('clearAll').addEventListener('click', function() {
+  currentType = 'all';
+  urgentOnly = false;
+
+  document.querySelectorAll('.type-chip').forEach(function(c) { c.classList.remove('active'); });
+  document.querySelector('.type-chip[data-type="all"]').classList.add('active');
+
+  var urgentBtn = document.getElementById('urgentToggle');
+  urgentBtn.classList.remove('active');
+  urgentBtn.setAttribute('data-urgent', 'false');
+
+  document.getElementById('searchInput').value = '';
+  applyFilters();
+  updateActiveFiltersUI();
+});
+
+// ---------- تشغيل أولي ----------
+switchDomain(currentDomain);
+</script>
+</body>
+</html>
