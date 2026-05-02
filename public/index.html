@@ -18,7 +18,7 @@
       <ul class="nav-links">
         <li><a href="listings.html">Announcements</a></li>
         <li><a href="research-hub.html">Research Hub</a></li>
-        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
+        <li><a href="needs-board.html" class="needs-link"> Needs</a></li>
       </ul>
       <div class="nav-actions" id="navActions">
         <a href="login.html" class="btn btn-outline">Login</a>
@@ -137,10 +137,10 @@
         <h2>Research Hub — Not Just Books</h2>
         <p>Summaries, notes, past exams — everything you need in one place</p>
         <div class="research-tags">
-          <span class="research-tag">📄 Summaries</span>
-          <span class="research-tag">📝 Scanned Notes</span>
-          <span class="research-tag">📋 Past Exams</span>
-          <span class="research-tag">🔬 Research Tools</span>
+          <span class="research-tag"> Summaries</span>
+          <span class="research-tag"> Scanned Notes</span>
+          <span class="research-tag"> Past Exams</span>
+          <span class="research-tag"> Research Tools</span>
         </div>
       </div>
       <a href="research-hub.html" class="btn btn-white" style="flex-shrink:0;">Explore Now</a>
@@ -174,18 +174,18 @@ document.querySelectorAll('#mobileNav a').forEach(function(link) {
   });
 });
 
-/* ── Helper: domain emoji ── */
-function domainEmoji(domain) {
-  if (!domain) return '📄';
-  const d = domain.toLowerCase();
-  if (d.includes('med'))  return '⚕️';
-  if (d.includes('eng'))  return '⚙️';
-  if (d.includes('art') || d.includes('human')) return '📖';
-  if (d.includes('sci'))  return '🔬';
-  if (d.includes('law'))  return '⚖️';
-  if (d.includes('bus') || d.includes('econ'))  return '💼';
-  return '📄';
-}
+// /* ── Helper: domain emoji ── */
+// function domainEmoji(domain) {
+//   if (!domain) return '📄';
+//   const d = domain.toLowerCase();
+//   if (d.includes('med'))  return '⚕️';
+//   if (d.includes('eng'))  return '⚙️';
+//   if (d.includes('art') || d.includes('human')) return '📖';
+//   if (d.includes('sci'))  return '🔬';
+//   if (d.includes('law'))  return '⚖️';
+//   if (d.includes('bus') || d.includes('econ'))  return '💼';
+//   return '📄';
+// }
 
 /* ── Auth navbar update ── */
 if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
