@@ -2,374 +2,514 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>UniSwap — Research Hub | Academic Content Exchange</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniSwap — Research Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="api.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --purple: #6C5CE7;
-    --purple-lt: #EDEAFE;
-    --navy: #1E2F5E;
-    --teal: #00B894;
-    --teal-lt: #E0F7F0;
-    --coral: #FF7675;
-    --coral-lt: #FFE8E8;
-    --black: #2D3436;
-    --white: #FFFFFF;
-    --gray-bg: #F8F9FD;
-    --border: #E2E8F0;
-    --text: #1E293B;
-    --text2: #475569;
-    --text3: #94A3B8;
-    --radius: 12px;
-    --radius-lg: 20px;
-    --shadow-sm: 0 4px 12px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-md: 0 12px 25px -8px rgba(0,0,0,0.1);
-  }
-  body { font-family: 'Inter', sans-serif; background: #F5F7FD; color: var(--text); line-height: 1.4; }
-  .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-  
-  /* navbar */
-  /* .navbar { background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top:0; z-index:200; backdrop-filter: blur(0px); }
-  .navbar-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; flex-wrap: wrap; }
-  .logo { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; color: var(--navy); text-decoration: none; cursor: pointer; }
-  .logo span { color: var(--purple); }
-  .nav-links { display: flex; gap: 28px; list-style: none; }
-  .nav-links a { text-decoration: none; color: var(--text2); font-weight: 500; transition: color .2s; font-size: 15px; cursor: pointer; }
-  .nav-links a:hover, .nav-links a.active { color: var(--purple); font-weight: 600; }
-  .nav-actions { display: flex; gap: 10px; }
-  .btn { display: inline-block; padding: 8px 18px; border-radius: 40px; font-weight: 600; font-size: 13px; text-decoration: none; transition: all .2s; cursor: pointer; border: none; font-family: inherit; }
-  .btn-outline { border: 1.5px solid var(--border); background: transparent; color: var(--text2); }
-  .btn-outline:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-lt); }
-  .btn-primary { background: var(--purple); color: white; box-shadow: 0 2px 6px rgba(108,92,231,0.2); }
-  .btn-primary:hover { background: #5a4ad0; transform: translateY(-1px); }
-  .btn-white { background: white; color: var(--purple); border: 1px solid rgba(255,255,255,0.4); font-weight: 700; }
-  .btn-ghost { background: #F1F5F9; color: var(--text2); }
-  .btn-sm { padding: 6px 14px; font-size: 12px; }
-  .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; }
-  .hamburger span { width: 24px; height: 2px; background: var(--navy); border-radius: 3px; }
-  .mobile-nav { display: none; flex-direction: column; background: white; padding: 20px; gap: 14px; border-top: 1px solid var(--border); }
-  .mobile-nav a { text-decoration: none; color: var(--text2); font-weight: 500; cursor: pointer; }
-  .mobile-actions { display: flex; gap: 12px; margin-top: 8px; }
-  @media (max-width: 768px) { .nav-links, .nav-actions { display: none; } .hamburger { display: flex; } .mobile-nav.open { display: flex; } .hub-grid { grid-template-columns: 1fr; } } */
-/* ════════════════════════════════════════════
-   NAVBAR — Breadcrumb
-════════════════════════════════════════════ */
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: 24px;
+/* ── Research Hub header ── */
+.hub-header-main {
+  background: var(--navy);
+  padding: 40px 0 0;
+  position: relative;
+  overflow: hidden;
 }
-.breadcrumb-link {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text3);
-  text-decoration: none;
-  transition: color .15s;
+.hub-header-main::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(83,74,183,.28) 0%, transparent 70%);
+  pointer-events: none;
 }
-.breadcrumb-link:hover { color: var(--navy); }
-.breadcrumb-sep {
-  font-size: 13px;
-  color: var(--border);
-  user-select: none;
+.hub-header-inner {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 20px;
+  margin-bottom: 28px; position: relative;
 }
-.breadcrumb-current {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--navy);
+.hub-header-inner h1 { font-size: 26px; font-weight: 900; color: #fff; }
+.hub-header-inner p  { font-size: 14px; color: rgba(255,255,255,.6); margin-top: 4px; }
+.hub-header-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.hub-badge-stat {
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+  color: rgba(255,255,255,.85); padding: 4px 14px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
 }
-  /* hub header */
-  .hub-header { background: linear-gradient(135deg, #1a3a5c 0%, #122a44 100%); color: white; padding: 40px 0 32px; border-radius: 0 0 32px 32px; margin-bottom: 32px; }
-  .hub-header-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
-  .hub-header h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.3px; }
-  .hub-header p { font-size: 14px; opacity: 0.8; }
-  .hub-header-badges { display: flex; gap: 12px; flex-wrap: wrap; }
-  .hub-badge { background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); padding: 8px 18px; border-radius: 40px; font-size: 13px; font-weight: 600; }
-  .ai-search-bar { background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
-  .ai-search-bar input { flex: 1; background: none; border: none; outline: none; color: white; font-family: 'Inter'; font-size: 14px; min-width: 150px; }
-  .ai-search-bar input::placeholder { color: rgba(255,255,255,0.6); }
-  .ai-search-label { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 40px; font-size: 11px; font-weight: 700; color: #E0E7FF; }
-  .ai-search-btn { background: white; color: var(--purple); border: none; padding: 8px 20px; border-radius: 40px; font-weight: 700; font-size: 13px; cursor: pointer; }
-  .hub-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
-  .hub-tab { background: rgba(255,255,255,0.1); border: none; padding: 8px 20px; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; font-family: inherit; transition: 0.2s; }
-  .hub-tab.active { background: white; color: var(--purple); }
-  .hub-body { padding-bottom: 60px; }
-  .filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 28px; background: white; padding: 12px 16px; border-radius: 60px; box-shadow: var(--shadow-sm); }
-  .results-count-label { font-size: 13px; font-weight: 600; color: var(--text3); margin-right: auto; }
-  .hub-type-tab { background: transparent; border: 1.5px solid var(--border); padding: 6px 18px; border-radius: 40px; font-weight: 600; font-size: 13px; color: var(--text2); cursor: pointer; transition: 0.2s; }
-  .hub-type-tab.active { background: var(--purple); border-color: var(--purple); color: white; }
-  .hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-top: 12px; }
-  .hub-card { background: white; border-radius: 20px; padding: 20px; box-shadow: var(--shadow-sm); transition: all 0.2s; border: 1px solid var(--border); }
-  .hub-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-  .hub-card-top { display: flex; gap: 12px; margin-bottom: 14px; }
-  .hub-card-icon { width: 38px; height: 38px; border-radius: 14px; background: var(--purple-lt); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--purple); }
-  .hub-card-title { font-weight: 800; font-size: 16px; color: var(--navy); margin-bottom: 4px; }
-  .hub-card-sub { font-size: 12px; color: var(--text3); }
-  .hub-card-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-  .badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 30px; background: #F1F5F9; color: var(--text2); }
-  .badge-medical { background: #E6F7FF; color: #0096C7; }
-  .badge-eng { background: #E9ECFF; color: #3B4EFF; }
-  .badge-arts { background: #FFECEC; color: #E86A6A; }
-  .hub-card-desc { font-size: 13px; color: var(--text2); margin: 10px 0 14px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .hub-card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 6px; }
-  .hub-card-user { display: flex; align-items: center; gap: 8px; }
-  .avatar { width: 26px; height: 26px; background: var(--purple-lt); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 10px; color: var(--purple); }
-  .hub-download-btn { background: transparent; border: 1px solid var(--border); border-radius: 30px; padding: 5px 14px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-  .hub-download-btn.summary:hover { background: var(--purple-lt); border-color: var(--purple); color: var(--purple); }
-  .empty-state { text-align: center; padding: 64px 24px; background: white; border-radius: 28px; border: 1px dashed var(--border); grid-column: 1/-1; }
-  .empty-state-icon { font-size: 52px; margin-bottom: 12px; opacity: 0.6; }
-  .pagination { display: flex; justify-content: center; gap: 12px; margin-top: 40px; }
-  .pagination.hide { display: none; }
-  .page-btn { background: white; border: 1px solid var(--border); padding: 8px 16px; border-radius: 40px; font-weight: 600; cursor: pointer; }
-  .page-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal-box { background: white; border-radius: 28px; max-width: 540px; width: 90%; padding: 28px; max-height: 85vh; overflow-y: auto; box-shadow: 0 30px 50px rgba(0,0,0,0.3); transform: scale(0.96); transition: transform 0.2s; }
-  .modal-overlay.open .modal-box { transform: scale(1); }
-  .form-group { margin-bottom: 18px; }
-  .form-label { font-weight: 700; font-size: 13px; display: block; margin-bottom: 6px; color: var(--navy); }
-  .form-input, .form-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 16px; font-family: inherit; font-size: 14px; outline: none; transition: 0.2s; }
-  .form-input:focus, .form-textarea:focus { border-color: var(--purple); }
-  .form-row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .form-row .form-group { flex: 1; }
-  .content-type-grid { display: flex; gap: 10px; margin-bottom: 10px; }
-  .content-type-btn { flex: 1; background: var(--gray-bg); border: 1.5px solid var(--border); border-radius: 40px; padding: 10px 0; font-weight: 700; cursor: pointer; transition: 0.2s; text-align: center; font-size: 13px; }
-  .content-type-btn.active { background: var(--purple-lt); border-color: var(--purple); color: var(--purple); }
-  .upload-zone-lg { border: 2px dashed var(--border); border-radius: 24px; padding: 28px; text-align: center; cursor: pointer; background: var(--gray-bg); transition: 0.2s; margin: 16px 0; }
-  .upload-zone-lg.uploaded { border-color: var(--teal); background: #e6f9f0; }
-  .preview-mini { background: #F8FAFE; border-radius: 16px; padding: 12px; font-size: 12px; margin-bottom: 8px; }
-  .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) scale(0.9); background: var(--navy); color: white; padding: 12px 24px; border-radius: 60px; font-size: 13px; font-weight: 600; opacity: 0; transition: 0.2s; z-index: 1200; pointer-events: none; }
-  .toast.show { opacity: 1; transform: translateX(-50%) scale(1); }
-  .ai-results-panel { background: white; border-radius: 24px; padding: 20px; margin-bottom: 28px; box-shadow: var(--shadow-md); display: none; border-left: 5px solid var(--purple); }
-  .ai-results-panel.show { display: block; animation: fadeSlide 0.25s ease; }
-  @keyframes fadeSlide { from { opacity:0; transform: translateY(-8px); } to { opacity:1; } }
-  footer { background: white; border-top: 1px solid var(--border); padding: 32px 0; margin-top: 40px; }
-  .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-  .footer-links { display: flex; gap: 20px; }
-  .footer-links a { color: var(--text3); text-decoration: none; font-size: 13px; cursor: pointer; }
-  .footer-links a:hover { color: var(--purple); }
+.hub-main-search { max-width: 600px; margin-bottom: 24px; }
+.hub-main-search input {
+  width: 100%; height: 48px;
+  background: rgba(255,255,255,.1);
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: var(--radius);
+  padding: 0 16px;
+  font-family: 'Cairo', sans-serif; font-size: 15px; color: #fff; outline: none;
+  transition: background .2s, border-color .2s;
+}
+.hub-main-search input::placeholder { color: rgba(255,255,255,.45); }
+.hub-main-search input:focus { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.4); }
+
+/* ── Hub Body ── */
+.hub-body-wrap { padding: 32px 0 64px; }
+
+/* Type tabs */
+.hub-type-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.hub-type-btn {
+  padding: 8px 18px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: var(--white);
+  font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 600;
+  color: var(--text2); cursor: pointer; transition: all .15s;
+}
+.hub-type-btn:hover { border-color: var(--purple); color: var(--purple); }
+.hub-type-btn.active { background: var(--purple-lt); border-color: var(--purple); color: var(--purple); }
+
+/* Hub Grid */
+.hub-grid-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+/* Hub Card */
+.hub-card-main {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px; display: flex; flex-direction: column; gap: 10px;
+  transition: transform .2s, box-shadow .2s;
+}
+.hub-card-main:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.hub-card-main.summary { border-right: 3px solid var(--purple); }
+.hub-card-main.notes   { border-right: 3px solid var(--teal); }
+.hub-card-main.exam    { border-right: 3px solid var(--coral); }
+
+.hub-card-top-row { display: flex; align-items: center; gap: 10px; }
+.hub-card-icon-box {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; flex-shrink: 0;
+}
+.hub-card-icon-box.summary { background: var(--purple-lt); color: var(--purple); }
+.hub-card-icon-box.notes   { background: var(--teal-lt);   color: var(--teal); }
+.hub-card-icon-box.exam    { background: var(--coral-lt);  color: var(--coral); }
+
+.hub-card-title-text { font-size: 14px; font-weight: 700; color: var(--navy); line-height: 1.4; }
+.hub-card-sub-text   { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.hub-card-tags-row   { display: flex; gap: 5px; flex-wrap: wrap; }
+.hub-card-desc-text  { font-size: 12px; color: var(--text3); line-height: 1.6; }
+.hub-card-footer-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 10px; border-top: 1px solid var(--border);
+}
+.hub-card-user-row { display: flex; align-items: center; gap: 6px; }
+.hub-card-user-row .avatar { width: 24px; height: 24px; font-size: 8px; }
+.hub-card-user-name { font-size: 11px; color: var(--text3); }
+.hub-card-dl-count  { font-size: 12px; color: var(--text3); }
+.hub-dl-btn {
+  padding: 5px 14px; border-radius: 20px; border: none; cursor: pointer;
+  font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700; transition: opacity .15s;
+}
+.hub-dl-btn.summary { background: var(--purple-lt); color: var(--purple); }
+.hub-dl-btn.notes   { background: var(--teal-lt);   color: var(--teal); }
+.hub-dl-btn.exam    { background: var(--coral-lt);  color: var(--coral); }
+.hub-dl-btn:hover   { opacity: .75; }
+
+/* Upload card */
+.hub-upload-empty {
+  background: var(--white); border: 2px dashed var(--border);
+  border-radius: var(--radius-lg); padding: 40px; text-align: center;
+  cursor: pointer; transition: border-color .2s, background .2s;
+  grid-column: 1/-1;
+}
+.hub-upload-empty:hover { border-color: var(--purple); background: var(--purple-lt); }
+.hub-upload-empty h3 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.hub-upload-empty p  { font-size: 13px; color: var(--text3); margin-bottom: 14px; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(26,58,92,.45);
+  backdrop-filter: blur(4px); z-index: 400;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--white); border-radius: var(--radius-lg);
+  padding: 28px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  transform: scale(.96); transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-overlay.open .modal-box { transform: scale(1); }
+.form-textarea {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  font-family: 'Cairo', sans-serif; font-size: 14px; color: var(--text);
+  background: var(--bg); outline: none; resize: vertical; min-height: 80px;
+  transition: border-color .2s, background .2s;
+}
+.form-textarea:focus { border-color: var(--navy); background: var(--white); }
+.form-textarea::placeholder { color: var(--text3); }
+.content-type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+.content-type-btn {
+  padding: 10px; border-radius: 8px;
+  border: 1.5px solid var(--border); background: var(--white);
+  font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--text2); cursor: pointer; transition: all .15s; text-align: center;
+}
+.content-type-btn:hover { border-color: var(--purple); color: var(--purple); }
+.content-type-btn.active { border-color: var(--purple); background: var(--purple-lt); color: var(--purple); }
+.upload-zone {
+  border: 2px dashed var(--border); border-radius: var(--radius);
+  padding: 28px; text-align: center; cursor: pointer;
+  background: var(--bg); transition: border-color .2s, background .2s; margin: 12px 0;
+}
+.upload-zone:hover  { border-color: var(--purple); background: var(--purple-lt); }
+.upload-zone.done   { border-color: var(--teal); background: var(--teal-lt); }
+.upload-zone-title  { font-size: 14px; font-weight: 700; color: var(--text2); margin-bottom: 4px; }
+.upload-zone-sub    { font-size: 12px; color: var(--text3); }
+
+/* Hub type tab selected highlights in domain tabs */
+.domain-tab.purple-tab.active { color: #fff; border-bottom-color: #b5a8f5; }
+
+/* toast */
+.hub-toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  background: var(--navy); color: #fff; padding: 12px 24px;
+  border-radius: var(--radius); font-size: 14px; font-weight: 600;
+  box-shadow: var(--shadow-lg); z-index: 999; display: none;
+}
+.hub-toast.show { display: block; }
+.hub-toast.success-t { background: var(--teal); }
 </style>
 </head>
 <body>
 
-<!-- <nav class="navbar">
-  <div class="container">
-    <div class="navbar-inner">
-      <a href="index.html" class="logo">Uni<span>Swap</span></a>
-      <ul class="nav-links">
-        <li><a href="listings.html">Announcements</a></li>
-        <li><a href="research-hub.html" class="active">Research Hub</a></li>
-        <li><a href="needs-board.html">Needs Board</a></li>
-      </ul>
-      <div class="nav-actions">
-        <a href="dashboard.html" class="btn btn-outline">Dashboard</a>
-        <a href="login.html" class="btn btn-primary">Sign Out</a>
-      </div>
-      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
-    </div>
-    <div class="mobile-nav" id="mobileNav">
-      <a href="listings.html">Announcements</a>
-      <a href="research-hub.html" class="active">Research Hub</a>
-      <a href="needs-board.html">Needs Board</a>
-      <div class="mobile-actions">
-        <a href="dashboard.html" class="btn btn-outline">Dashboard</a>
-        <a href="login.html" class="btn btn-primary">Sign Out</a>
-      </div>
-    </div>
-  </div>
-</nav> -->
+<!-- NAVBAR -->
 <nav class="navbar">
   <div class="container">
     <div class="navbar-inner">
       <a href="index.html" class="logo">Uni<span>Swap</span></a>
       <ul class="nav-links">
-        <li><a href="listings.html">Announcements</a></li>                
-        <li><a href="research-hub.html">Research Hub</a></li>
-        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
+        <li><a href="listings.html">Announcements</a></li>
+        <li><a href="research-hub.html" style="background:var(--white);color:var(--navy);font-weight:600;">Research Hub</a></li>
+        <li><a href="needs-board.html" class="needs-link">Needs</a></li>
       </ul>
-       <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
-
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
+      </div>
     </div>
   </div>
 </nav>
-<div class="hub-header">
+
+<!-- HEADER -->
+<div class="hub-header-main">
   <div class="container">
     <div class="hub-header-inner">
-      <div><h1>Research Hub</h1><p>Academic content exchange — summaries, notes, past exams, study tools</p></div>
-      <div class="hub-header-badges" id="statsBadges">
-        <span class="hub-badge" id="summaryCount">0 Summaries</span>
-        <span class="hub-badge" id="notesCount">0 Notes</span>
-        <span class="hub-badge" id="examCount">0 Exams</span>
+      <div>
+        <h1>Research Hub</h1>
+        <p>Summaries, notes, past exams — everything you need in one place</p>
       </div>
-      <button class="btn btn-white btn-sm" onclick="openUploadModal()">+ Share Content</button>
+      <div class="hub-header-badges">
+        <span class="hub-badge-stat" id="statSummary">0 Summaries</span>
+        <span class="hub-badge-stat" id="statNotes">0 Notes</span>
+        <span class="hub-badge-stat" id="statExam">0 Exams</span>
+      </div>
+      <button class="btn btn-white btn-sm" style="color:var(--navy);flex-shrink:0;" onclick="openUploadModal()">+ Share Content</button>
     </div>
-    <div class="ai-search-bar">
-      <input type="text" id="hubSearch" placeholder="Search by subject, professor, topic..." oninput="applyFilters()">
-      <span class="ai-search-label">AI Search</span>
-      <button class="ai-search-btn" onclick="aiSearch()">Ask AI</button>
+    <div class="hub-main-search">
+      <input type="text" id="hubSearch" placeholder="Search by subject, topic, or professor..." oninput="applyFilters()">
     </div>
-    <div class="hub-tabs">
-      <button class="hub-tab active" data-domain="all" onclick="setDomain(this,'all')">All</button>
-      <button class="hub-tab" data-domain="medical" onclick="setDomain(this,'medical')">Medical</button>
-      <button class="hub-tab" data-domain="eng" onclick="setDomain(this,'eng')">Engineering</button>
-      <button class="hub-tab" data-domain="arts" onclick="setDomain(this,'arts')">Arts</button>
+    <div class="domain-tabs">
+      <button class="domain-tab active" data-domain="all" onclick="setDomain(this,'all')">All</button>
+      <button class="domain-tab" data-domain="medical" onclick="setDomain(this,'medical')">Medical</button>
+      <button class="domain-tab" data-domain="engineering" onclick="setDomain(this,'engineering')">Engineering</button>
+      <button class="domain-tab" data-domain="arts" onclick="setDomain(this,'arts')">Humanities</button>
     </div>
   </div>
 </div>
 
-<div class="hub-body">
+<!-- BODY -->
+<div class="hub-body-wrap">
   <div class="container">
-    <div class="ai-results-panel" id="aiResultsPanel"><div class="ai-results-header" style="display:flex; justify-content:space-between;"><span style="font-weight:800;">AI Insight</span><button class="ai-close-results" onclick="closeAIResults()" style="background:none; border:none; font-size:18px;cursor:pointer;">✕</button></div><div id="aiResultContent"></div></div>
-    <div class="filter-row">
-      <span class="results-count-label" id="resultsLabel">Showing all content</span>
-      <button class="hub-type-tab active" data-type="all" onclick="setType(this,'all')">All</button>
-      <button class="hub-type-tab" data-type="summary" onclick="setType(this,'summary')" id="typeSummaryBtn">Summaries (0)</button>
-      <button class="hub-type-tab" data-type="notes" onclick="setType(this,'notes')" id="typeNotesBtn">Notes (0)</button>
-      <button class="hub-type-tab" data-type="exam" onclick="setType(this,'exam')" id="typeExamBtn">Past Exams (0)</button>
+    <div class="content-header" style="margin-bottom:24px;">
+      <div class="results-count">Showing <strong id="shownCount">0</strong> items</div>
+      <div class="hub-type-tabs">
+        <button class="hub-type-btn active" data-type="all" onclick="setType(this,'all')">All</button>
+        <button class="hub-type-btn" data-type="summary" id="btnSummary" onclick="setType(this,'summary')">Summaries</button>
+        <button class="hub-type-btn" data-type="notes"   id="btnNotes"   onclick="setType(this,'notes')">Notes</button>
+        <button class="hub-type-btn" data-type="exam"    id="btnExam"    onclick="setType(this,'exam')">Past Exams</button>
+      </div>
     </div>
-    <div class="hub-grid" id="hubGrid"></div>
-    <div class="pagination hide" id="paginationContainer"></div>
+    <div class="hub-grid-main" id="hubGrid"></div>
+    <div class="pagination" id="paginationWrap" style="display:none;margin-top:28px;"></div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal-box">
+    <div style="font-size:18px;font-weight:900;color:var(--navy);margin-bottom:4px;">Share Academic Content</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:20px;">Help fellow students with your best resources</div>
+
+    <div class="form-group">
+      <label class="form-label">Content Type</label>
+      <div class="content-type-grid">
+        <button class="content-type-btn active" onclick="selectType(this,'summary')">Summary</button>
+        <button class="content-type-btn" onclick="selectType(this,'notes')">Notes</button>
+        <button class="content-type-btn" onclick="selectType(this,'exam')">Past Exam</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Title</label>
+      <input type="text" class="form-input" id="uploadTitle" placeholder="e.g. Anatomy summary — cardiovascular system">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Domain</label>
+        <select class="form-input" id="uploadDomain" style="cursor:pointer;">
+          <option value="" disabled selected>Select domain</option>
+          <option value="medical">Medical</option>
+          <option value="engineering">Engineering</option>
+          <option value="arts">Humanities</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Year</label>
+        <select class="form-input" id="uploadYear" style="cursor:pointer;">
+          <option value="Year 1">Year 1</option>
+          <option value="Year 2">Year 2</option>
+          <option value="Year 3">Year 3</option>
+          <option value="Year 4">Year 4</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Professor / Subject (optional)</label>
+      <input type="text" class="form-input" id="uploadProf" placeholder="e.g. Dr. Sarah">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="uploadDesc" placeholder="Brief description..."></textarea>
+    </div>
+    <div class="upload-zone" id="uploadZone" onclick="fakeUpload()">
+      <div class="upload-zone-title">Attach File</div>
+      <div class="upload-zone-sub">Click to upload PDF — max 20MB</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-ghost" onclick="closeUploadModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitUpload()">Share Content</button>
+    </div>
   </div>
 </div>
 
 <footer>
   <div class="container">
     <div class="footer-inner">
-      <a href="index.html" class="logo" style="font-size:18px;">Uni<span>Swap</span></a>
+      <a href="index.html" class="logo">Uni<span>Swap</span></a>
       <div class="footer-links">
-        <a href="index.html">About</a>
-        <a href="index.html">Contact</a>
-        <a href="index.html">Terms</a>
+        <a href="#">About Us</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Usage Policy</a>
       </div>
-      <div style="color:var(--text3);">UniSwap © 2026 — Web Project</div>
+      <div class="footer-copy">UniSwap © 2026 — Web Development Project</div>
     </div>
   </div>
 </footer>
 
-<div class="modal-overlay" id="uploadModal"><div class="modal-box"><div class="modal-title" style="font-weight:800; font-size:20px;">Share Academic Content</div><div class="modal-sub" style="color:gray; margin-bottom:16px;">Help fellow students by sharing your best resources</div>
-<div class="form-group"><label class="form-label">Content Type</label><div class="content-type-grid"><button class="content-type-btn active" onclick="selectContentType(this,'summary')">📄 Summary</button><button class="content-type-btn" onclick="selectContentType(this,'notes')">📝 Notes</button><button class="content-type-btn" onclick="selectContentType(this,'exam')">📖 Past Exam</button></div></div>
-<div class="form-group"><label class="form-label">Title</label><input type="text" class="form-input" id="uploadTitle" placeholder="e.g. Anatomy summary - cardiovascular system"></div>
-<div class="form-row"><div class="form-group"><label class="form-label">Domain</label><select class="form-input" id="uploadDomain"><option value="">Select domain</option><option value="medical">Medical</option><option value="eng">Engineering</option><option value="arts">Arts</option></select></div><div class="form-group"><label class="form-label">Year / Level</label><select class="form-input" id="uploadYear"><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option></select></div></div>
-<div class="form-group"><label class="form-label">Professor / Subject (optional)</label><input type="text" class="form-input" id="uploadProf" placeholder="Dr. Sarah, Prof. Lee"></div>
-<div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="uploadDesc" placeholder="Brief description ..."></textarea></div>
-<div class="upload-zone-lg" id="uploadZone" onclick="fakeFileUpload()"><div style="font-size:12px; font-weight:700;">📎 Upload file</div><div style="font-size:13px; margin-top:4px;">Click to attach PDF (max 20MB)</div></div>
-<div class="preview-mini" id="uploadPreview" style="display:none;"><strong>Preview:</strong> <span id="previewText"></span></div>
-<div class="modal-actions"><button class="btn btn-ghost" onclick="closeUploadModal()">Cancel</button><button class="btn btn-primary" onclick="submitUpload()">Share Content</button></div></div></div>
-<div class="toast" id="toast"></div>
+<div class="hub-toast" id="toast"></div>
 
 <script>
+if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+  const user = Auth.getUser();
+  if (user) {
+    const initials = user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    document.getElementById('navAvatar').textContent = initials;
+  }
+}
+
 let content = [];
 let currentDomain = 'all';
 let currentType = 'all';
-let selectedContentType = 'summary';
-let fileUploadedFlag = false;
+let selectedUploadType = 'summary';
+let fileUploaded = false;
+const PER_PAGE = 9;
+let currentPage = 1;
 
-function updateStatsAndPagination() {
-  let summaryCount = content.filter(c => c.type === 'summary').length;
-  let notesCount = content.filter(c => c.type === 'notes').length;
-  let examCount = content.filter(c => c.type === 'exam').length;
-  document.getElementById('summaryCount').innerHTML = summaryCount + ' ' + (summaryCount === 1 ? 'Summary' : 'Summaries');
-  document.getElementById('notesCount').innerHTML = notesCount + ' ' + (notesCount === 1 ? 'Note' : 'Notes');
-  document.getElementById('examCount').innerHTML = examCount + ' ' + (examCount === 1 ? 'Exam' : 'Exams');
-  document.getElementById('typeSummaryBtn').innerHTML = 'Summaries (' + summaryCount + ')';
-  document.getElementById('typeNotesBtn').innerHTML = 'Notes (' + notesCount + ')';
-  document.getElementById('typeExamBtn').innerHTML = 'Past Exams (' + examCount + ')';
-  const paginationDiv = document.getElementById('paginationContainer');
-  if (content.length > 6) paginationDiv.classList.remove('hide');
-  else paginationDiv.classList.add('hide');
+const typeLabels = { summary: 'Summary', notes: 'Notes', exam: 'Past Exam' };
+const domainLabels = { medical: 'Medical', engineering: 'Engineering', arts: 'Humanities' };
+const domainBadge = { medical: 'badge-medical', engineering: 'badge-eng', arts: 'badge-arts' };
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-function renderContent(list) {
+function updateStats() {
+  const s = content.filter(c => c.type === 'summary').length;
+  const n = content.filter(c => c.type === 'notes').length;
+  const e = content.filter(c => c.type === 'exam').length;
+  document.getElementById('statSummary').textContent = s + (s === 1 ? ' Summary' : ' Summaries');
+  document.getElementById('statNotes').textContent   = n + (n === 1 ? ' Note' : ' Notes');
+  document.getElementById('statExam').textContent    = e + (e === 1 ? ' Exam' : ' Exams');
+  document.getElementById('btnSummary').textContent  = 'Summaries (' + s + ')';
+  document.getElementById('btnNotes').textContent    = 'Notes (' + n + ')';
+  document.getElementById('btnExam').textContent     = 'Past Exams (' + e + ')';
+}
+
+function getFiltered() {
+  const q = document.getElementById('hubSearch').value.trim().toLowerCase();
+  return content.filter(c => {
+    const dOk = currentDomain === 'all' || c.domain === currentDomain;
+    const tOk = currentType === 'all' || c.type === currentType;
+    const sOk = !q || c.title.toLowerCase().includes(q) || (c.desc || '').toLowerCase().includes(q);
+    return dOk && tOk && sOk;
+  });
+}
+
+function renderGrid() {
+  const filtered = getFiltered();
   const grid = document.getElementById('hubGrid');
+  const paginated = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+
+  document.getElementById('shownCount').textContent = filtered.length;
+  updateStats();
+
   grid.innerHTML = '';
-  if (list.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon"></div><h3>No content yet</h3><p>Be the first to share a summary, notes, or past exam</p><button class="btn btn-primary" style="margin-top:16px;" onclick="openUploadModal()">+ Share Content</button></div>`;
-    document.getElementById('resultsLabel').innerText = 'Showing 0 items';
-    updateStatsAndPagination();
-    return;
+
+  if (!paginated.length) {
+    grid.innerHTML = `
+      <div class="hub-upload-empty" onclick="openUploadModal()">
+        <h3>No content yet</h3>
+        <p>Be the first to share a summary, notes, or past exam for this field.</p>
+        <button class="btn btn-primary">Share Content</button>
+      </div>`;
+    renderPagination(0); return;
   }
-  list.forEach(c => {
-    let typeMeta = { summary:{ icon:'', label:'Summary', color:'#6C5CE7', bg:'#EDEAFE'}, notes:{ icon:'', label:'Notes', color:'#00B894', bg:'#E0F7F0'}, exam:{ icon:'', label:'Past Exam', color:'#FF7675', bg:'#FFE8E8'} }[c.type];
-    let domainLabel = { medical:'Medical', eng:'Engineering', arts:'Arts' }[c.domain] || c.domain;
-    let domainClass = { medical:'badge-medical', eng:'badge-eng', arts:'badge-arts' }[c.domain] || '';
-    let card = document.createElement('div');
-    card.className = 'hub-card';
-    card.innerHTML = `
-      <div class="hub-card-top"><div class="hub-card-icon" style="background:${typeMeta.bg};color:${typeMeta.color};">${typeMeta.icon}</div><div><div class="hub-card-title">${escapeHtml(c.title)}</div><div class="hub-card-sub">${c.sub}</div></div></div>
-      <div class="hub-card-tags"><span class="badge" style="background:${typeMeta.bg};color:${typeMeta.color};">${typeMeta.label}</span><span class="badge ${domainClass}">${domainLabel}</span><span> ${c.pages} pages</span></div>
-      <div class="hub-card-desc">${escapeHtml(c.desc)}</div>
-      <div class="hub-card-footer"><div class="hub-card-user"><div class="avatar">${c.initials}</div><span>${c.user}</span></div><span class="hub-card-downloads">↓ ${c.downloads}</span><button class="hub-download-btn ${c.type}" onclick="downloadItem('${c.id}')">Download</button></div>
-    `;
-    grid.appendChild(card);
+
+  paginated.forEach(c => {
+    const initials = (c.user || 'S').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const shortLabel = { summary: 'SUM', notes: 'NOTE', exam: 'EXAM' }[c.type] || c.type.toUpperCase().slice(0,4);
+    grid.innerHTML += `
+      <div class="hub-card-main ${c.type}">
+        <div class="hub-card-top-row">
+          <div class="hub-card-icon-box ${c.type}">${shortLabel}</div>
+          <div>
+            <div class="hub-card-title-text">${esc(c.title)}</div>
+            <div class="hub-card-sub-text">${esc(c.sub)}</div>
+          </div>
+        </div>
+        <div class="hub-card-tags-row">
+          <span class="badge" style="background:${c.type==='summary'?'var(--purple-lt)':c.type==='notes'?'var(--teal-lt)':'var(--coral-lt)'};color:${c.type==='summary'?'var(--purple)':c.type==='notes'?'var(--teal)':'var(--coral)'};">${typeLabels[c.type]}</span>
+          <span class="badge ${domainBadge[c.domain]||''}">${domainLabels[c.domain]||c.domain}</span>
+          <span class="badge badge-condition">${esc(c.year)}</span>
+        </div>
+        ${c.desc ? `<div class="hub-card-desc-text">${esc(c.desc)}</div>` : ''}
+        <div class="hub-card-footer-row">
+          <div class="hub-card-user-row">
+            <div class="avatar">${initials}</div>
+            <span class="hub-card-user-name">${esc(c.user)}</span>
+          </div>
+          <span class="hub-card-dl-count">${c.downloads} downloads</span>
+          <button class="hub-dl-btn ${c.type}" onclick="dlItem('${c.id}')">Download</button>
+        </div>
+      </div>`;
   });
-  document.getElementById('resultsLabel').innerHTML = `Showing ${list.length} item${list.length !== 1 ? 's' : ''}`;
-  updateStatsAndPagination();
+  renderPagination(filtered.length);
 }
 
-function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
-
-function applyFilters() {
-  let searchTerm = document.getElementById('hubSearch').value.trim().toLowerCase();
-  let filtered = content.filter(c => {
-    let domainOk = (currentDomain === 'all' || c.domain === currentDomain);
-    let typeOk = (currentType === 'all' || c.type === currentType);
-    let searchOk = !searchTerm || c.title.toLowerCase().includes(searchTerm) || c.desc.toLowerCase().includes(searchTerm) || c.sub.toLowerCase().includes(searchTerm);
-    return domainOk && typeOk && searchOk;
-  });
-  renderContent(filtered);
+function renderPagination(total) {
+  const wrap = document.getElementById('paginationWrap');
+  const pages = Math.ceil(total / PER_PAGE);
+  if (pages <= 1) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  wrap.innerHTML = '';
+  for (let i = 1; i <= pages; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+    btn.textContent = i;
+    btn.onclick = () => { currentPage = i; renderGrid(); };
+    wrap.appendChild(btn);
+  }
 }
 
-function setDomain(btn, domain) { currentDomain = domain; document.querySelectorAll('.hub-tab').forEach(t => t.classList.remove('active')); btn.classList.add('active'); applyFilters(); }
-function setType(btn, type) { currentType = type; document.querySelectorAll('.hub-type-tab').forEach(t => t.classList.remove('active')); btn.classList.add('active'); applyFilters(); }
-function downloadItem(id) { let item = content.find(c => c.id == id); if(item) { item.downloads += 1; showToast(`Downloaded: ${item.title}`, false); applyFilters(); } }
-
-function aiSearch() {
-  let query = document.getElementById('hubSearch').value.trim();
-  if (!query) { showToast('Please enter a search term', false); return; }
-  let panel = document.getElementById('aiResultsPanel');
-  let resultDiv = document.getElementById('aiResultContent');
-  panel.classList.add('show');
-  resultDiv.innerHTML = '<div class="ai-thinking"> Thinking...</div>';
-  setTimeout(() => {
-    let relevant = content.filter(c => c.title.toLowerCase().includes(query.toLowerCase()) || c.desc.toLowerCase().includes(query.toLowerCase()));
-    let msg = relevant.length > 0 ? ` I found ${relevant.length} resource(s) matching "${query}". Try <strong>${relevant[0].title}</strong> (${relevant[0].type}) from ${relevant[0].domain} field. Use filters to refine.` : ` No existing resources match "${query}" yet. Be the first to upload relevant notes or exams!`;
-    resultDiv.innerHTML = `<p>${msg}</p><small style="color:gray;"> AI Assistant</small>`;
-  }, 500);
+function setDomain(btn, domain) {
+  currentDomain = domain; currentPage = 1;
+  document.querySelectorAll('.domain-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active'); applyFilters();
 }
-function closeAIResults() { document.getElementById('aiResultsPanel').classList.remove('show'); }
-function openUploadModal() { fileUploadedFlag = false; document.getElementById('uploadZone').innerHTML = '<div style="font-size:12px; font-weight:700;"> Upload file</div><div style="font-size:13px; margin-top:4px;">Click to attach PDF (max 20MB)</div>'; document.getElementById('uploadPreview').style.display = 'none'; document.getElementById('uploadModal').classList.add('open'); }
+
+function setType(btn, type) {
+  currentType = type; currentPage = 1;
+  document.querySelectorAll('.hub-type-btn').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active'); applyFilters();
+}
+
+function applyFilters() { currentPage = 1; renderGrid(); }
+
+function dlItem(id) {
+  const item = content.find(c => c.id === id);
+  if (item) { item.downloads++; renderGrid(); showToast('Downloaded: ' + item.title, true); }
+}
+
+function openUploadModal() {
+  fileUploaded = false;
+  document.getElementById('uploadZone').className = 'upload-zone';
+  document.getElementById('uploadZone').innerHTML = '<div class="upload-zone-title">Attach File</div><div class="upload-zone-sub">Click to upload PDF — max 20MB</div>';
+  document.getElementById('uploadModal').classList.add('open');
+}
 function closeUploadModal() { document.getElementById('uploadModal').classList.remove('open'); }
-function selectContentType(btn, type) { selectedContentType = type; document.querySelectorAll('.content-type-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); updatePreviewText(); }
-function fakeFileUpload() { fileUploadedFlag = true; let zone = document.getElementById('uploadZone'); zone.classList.add('uploaded'); zone.innerHTML = '<div> File uploaded!</div><div style="font-size:12px;">Click to replace</div>'; updatePreviewText(); }
-function updatePreviewText() { let title = document.getElementById('uploadTitle').value.trim(); let domain = document.getElementById('uploadDomain').value; let preview = document.getElementById('uploadPreview'); if (title && domain) { preview.style.display = 'block'; let typeLabel = { summary:'Summary', notes:'Notes', exam:'Past Exam' }[selectedContentType]; let domainLabel = { medical:'Medical', eng:'Engineering', arts:'Arts' }[domain] || '—'; document.getElementById('previewText').innerText = `${typeLabel} · ${domainLabel} · "${title}" ${fileUploadedFlag ? '✔️ file attached' : '⏳ file missing'}`; } else { preview.style.display = 'none'; } }
-function submitUpload() {
-  let title = document.getElementById('uploadTitle').value.trim();
-  let domain = document.getElementById('uploadDomain').value;
-  let prof = document.getElementById('uploadProf').value.trim();
-  let desc = document.getElementById('uploadDesc').value.trim();
-  if (!title) { showToast('Please enter a title', false); return; }
-  if (!domain) { showToast('Select a domain', false); return; }
-  if (!fileUploadedFlag) { showToast('Please upload a file', false); return; }
-  content.unshift({ id: Date.now(), type: selectedContentType, domain, title, sub: prof ? `By ${prof}` : 'Shared via UniSwap', desc: desc || `Student-uploaded ${selectedContentType} material.`, pages: Math.floor(Math.random() * 28) + 4, downloads: 0, user: 'You', initials: 'YO' });
-  closeUploadModal();
-  document.getElementById('uploadTitle').value = ''; document.getElementById('uploadDomain').value = ''; document.getElementById('uploadProf').value = ''; document.getElementById('uploadDesc').value = '';
-  fileUploadedFlag = false;
-  applyFilters();
-  showToast(' Content shared successfully!', true);
+document.getElementById('uploadModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('uploadModal')) closeUploadModal();
+});
+
+function selectType(btn, type) {
+  selectedUploadType = type;
+  document.querySelectorAll('.content-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
 }
-function showToast(msg, success) { let t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); if(success) t.style.background = '#00B894'; else t.style.background = '#2D3436'; setTimeout(() => t.classList.remove('show'), 2800); }
-document.getElementById('uploadTitle').addEventListener('input', updatePreviewText);
-document.getElementById('uploadDomain').addEventListener('change', updatePreviewText);
-document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobileNav').classList.toggle('open'));
-document.getElementById('uploadModal').addEventListener('click', (e) => { if(e.target === document.getElementById('uploadModal')) closeUploadModal(); });
-content = [];
-renderContent([]);
-updateStatsAndPagination();
+
+function fakeUpload() {
+  fileUploaded = true;
+  const z = document.getElementById('uploadZone');
+  z.className = 'upload-zone done';
+  z.innerHTML = '<div class="upload-zone-title">File attached</div><div class="upload-zone-sub">Click to replace</div>';
+}
+
+function submitUpload() {
+  const title  = document.getElementById('uploadTitle').value.trim();
+  const domain = document.getElementById('uploadDomain').value;
+  const year   = document.getElementById('uploadYear').value;
+  const prof   = document.getElementById('uploadProf').value.trim();
+  const desc   = document.getElementById('uploadDesc').value.trim();
+  if (!title)  { showToast('Please enter a title'); return; }
+  if (!domain) { showToast('Please select a domain'); return; }
+  if (!fileUploaded) { showToast('Please attach a file'); return; }
+
+  content.unshift({
+    id: String(Date.now()), type: selectedUploadType,
+    domain, title, year: year || 'Year 1',
+    sub: prof ? 'By ' + prof : 'Shared via UniSwap',
+    desc: desc || '', downloads: 0, user: 'You',
+  });
+
+  closeUploadModal();
+  document.getElementById('uploadTitle').value = '';
+  document.getElementById('uploadDomain').value = '';
+  document.getElementById('uploadProf').value = '';
+  document.getElementById('uploadDesc').value = '';
+  fileUploaded = false;
+  currentDomain = 'all'; currentType = 'all'; currentPage = 1;
+  document.querySelectorAll('.domain-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.domain-tab[data-domain="all"]').classList.add('active');
+  document.querySelectorAll('.hub-type-btn').forEach(t => t.classList.remove('active'));
+  document.querySelector('.hub-type-btn[data-type="all"]').classList.add('active');
+  renderGrid();
+  showToast('Content shared!', true);
+}
+
+function showToast(msg, success) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'hub-toast show' + (success ? ' success-t' : '');
+  setTimeout(() => t.className = 'hub-toast', 3000);
+}
+
+renderGrid();
 </script>
 </body>
 </html>
