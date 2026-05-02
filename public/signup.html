@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniSwap — Sign Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="api.js"></script>
+</head>
+<body class="auth-page">
+
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">Uni<span>Swap</span></a>
+      <div style="flex:1;"></div>
+      <a href="index.html" class="btn btn-ghost btn-sm">Back to Home</a>
+    </div>
+  </div>
+</nav>
+
+<div class="auth-body">
+  <div class="auth-card" style="max-width: 500px;">
+    <div class="auth-logo">
+      <a href="index.html" class="logo" style="font-size:26px;">Uni<span>Swap</span></a>
+      <p style="font-size:13px;color:var(--text3);margin-top:6px;">Create Your Account</p>
+    </div>
+
+    <div class="auth-form active">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" id="regName" placeholder="e.g. Ahmed Ali">
+      </div>
+      <div class="form-group">
+        <label class="form-label">University Email</label>
+        <input type="email" class="form-input" id="regEmail" placeholder="example@university.edu.eg">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="regPass" placeholder="••••••••">
+      </div>
+
+      <div class="form-row" style="display:flex; gap:12px;">
+        <div class="form-group" style="flex:1;">
+          <label class="form-label">Faculty/Domain</label>
+          <select class="form-input" id="regDomain">
+            <option value="medical">Medical</option>
+            <option value="engineering">Engineering</option>
+            <option value="arts">Arts</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label class="form-label">Year of Study</label>
+          <select class="form-input" id="regYear">
+            <option value="Year 1">Year 1</option>
+            <option value="Year 2">Year 2</option>
+            <option value="Year 3">Year 3</option>
+            <option value="Year 4">Year 4</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full" id="regBtn" onclick="doRegister()">Create Account</button>
+      
+      <div class="auth-note">By signing up, you agree to UniSwap's Terms of Service</div>
+      <div class="auth-footer-text">Already have an account? <a href="login.html">Login here</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+if (Auth.isLoggedIn()) window.location.href = 'dashboard.html';
+
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.className = 'toast' + (type === 'error' ? ' toast-error' : ' toast-success');
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+
+async function doRegister() {
+  const name   = document.getElementById('regName').value.trim();
+  const email  = document.getElementById('regEmail').value.trim();
+  const pass   = document.getElementById('regPass').value.trim();
+  const domain = document.getElementById('regDomain').value;
+  const year   = document.getElementById('regYear').value;
+
+  if (!name || !email || !pass) {
+    showToast('Please fill all required fields', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('regBtn');
+  btn.textContent = 'Creating account...';
+  btn.disabled = true;
+
+  try {
+    const payload = {
+      name: name,
+      email: email,
+      password: pass,
+      domain: domain,
+      college: 'University',
+      year: year
+    };
+    
+    const res = await AuthAPI.register(payload);
+    console.log("REGISTER OK:", res);
+    window.location.href = 'dashboard.html';
+  } catch (err) {
+    console.error(err);
+    showToast(err.message || 'Registration failed', 'error');
+    btn.textContent = 'Create Account';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

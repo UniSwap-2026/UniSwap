@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniSwap — Add Listing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">Uni<span>Swap</span></a>
+      <div style="flex:1;font-size:15px;font-weight:700;color:var(--navy);">Add New Listing</div>
+      <a href="dashboard.html" class="btn btn-ghost btn-sm">Cancel</a>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="add-listing-page">
+    <div class="add-listing-header">
+      <h1>Add New Listing</h1>
+      <p>Publish your item and reach thousands of students in seconds</p>
+    </div>
+
+    <div class="add-listing-layout">
+
+      <!-- LEFT: Form -->
+      <div>
+
+        <!-- Basic info -->
+        <div class="form-card">
+          <div class="form-card-title">Basic Information</div>
+          <div class="form-group">
+            <label class="form-label">Listing Title</label>
+            <input type="text" class="form-input" id="listingTitle" placeholder="Example: Gray's Anatomy 42nd Edition" oninput="updatePreview(); this.classList.remove('error');">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Academic Field</label>
+              <select class="form-input" id="listingDomain" onchange="updatePreview()" style="cursor:pointer;">
+                <option value="">Select field</option>
+                <option>⚕️ Medical</option>
+                <option>⚙️ Engineering</option>
+                <option>📖 Humanities</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select class="form-input" style="cursor:pointer;">
+                <option value="">Select category</option>
+                <option>Books & References</option>
+                <option>Devices & Tools</option>
+                <option>Software & Licenses</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Faculty</label>
+              <select class="form-input" style="cursor:pointer;">
+                <option value="">Select faculty</option>
+                <option>Faculty of Medicine</option>
+                <option>Faculty of Engineering</option>
+                <option>Faculty of Arts</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Year of Study</label>
+              <select class="form-input" style="cursor:pointer;">
+                <option value="">Select year</option>
+                <option>First Year</option>
+                <option>Second Year</option>
+                <option>Third Year</option>
+                <option>Fourth Year</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="descInput" class="form-textarea" placeholder="Describe the item — its condition, edition, reason for swapping..."></textarea>
+          </div>
+        </div>
+
+        <!-- Type -->
+        <div class="form-card">
+          <div class="form-card-title">Exchange Method</div>
+          <div class="type-select-list">
+            <button class="type-select-item active" onclick="selectType(this, 'donate')">
+              <div class="type-select-radio"><div class="type-select-dot"></div></div>
+              <div class="type-select-label">
+                <strong>Donate — Free</strong>
+                <small>Give it to any student in need at no cost</small>
+              </div>
+              <span class="badge badge-donate" style="margin-right:auto;">Donate</span>
+            </button>
+            <button class="type-select-item" onclick="selectType(this, 'swap')">
+              <div class="type-select-radio"><div class="type-select-dot"></div></div>
+              <div class="type-select-label">
+                <strong>Swap — Exchange</strong>
+                <small>Swap your item for another of equal value</small>
+              </div>
+              <span class="badge badge-swap" style="margin-right:auto;">Swap</span>
+            </button>
+            <button class="type-select-item" onclick="selectType(this, 'sell')">
+              <div class="type-select-radio"><div class="type-select-dot"></div></div>
+              <div class="type-select-label">
+                <strong>Sell</strong>
+                <small>Sell your item at a price you set</small>
+              </div>
+              <span class="badge badge-sell" style="margin-right:auto;">Sell</span>
+            </button>
+          </div>
+          <div class="price-field" id="priceField">
+            <div class="form-group" style="margin-top:14px;margin-bottom:0;">
+              <label class="form-label">Price (EGP)</label>
+              <input type="number" class="form-input" placeholder="Example: 150">
+            </div>
+          </div>
+        </div>
+
+        <!-- Condition -->
+        <div class="form-card">
+          <div class="form-card-title">Item Condition</div>
+          <div class="condition-grid">
+            <button class="condition-btn active" onclick="selectCondition(this)">Excellent</button>
+            <button class="condition-btn" onclick="selectCondition(this)">Very Good</button>
+            <button class="condition-btn" onclick="selectCondition(this)">Good</button>
+            <button class="condition-btn" onclick="selectCondition(this)">Acceptable</button>
+          </div>
+        </div>
+
+        <!-- Images -->
+        <div class="form-card">
+          <div class="form-card-title">Listing Images (max 2)</div>
+          <div class="form-row">
+            <div class="upload-zone" onclick="document.getElementById('imgUpload1').click()" id="zone1">
+              <div class="upload-icon">📷</div>
+              <div class="upload-title">Upload first image</div>
+              <div class="upload-sub">PNG or JPG · Max 5MB</div>
+            </div>
+            <input type="file" id="imgUpload1" accept="image/png, image/jpeg" style="display:none;" onchange="handleImageUpload(this, 'zone1', 0)">
+
+            <div class="upload-zone" onclick="document.getElementById('imgUpload2').click()" id="zone2">
+              <div class="upload-icon">📷</div>
+              <div class="upload-title">Second image (optional)</div>
+              <div class="upload-sub">PNG or JPG · Max 5MB</div>
+            </div>
+            <input type="file" id="imgUpload2" accept="image/png, image/jpeg" style="display:none;" onchange="handleImageUpload(this, 'zone2', 1)">
+          </div>
+        </div>
+
+        <!-- Urgency -->
+        <div class="form-card">
+          <div class="urgency-toggle">
+            <div class="urgency-inner">
+              <div class="toggle-switch" id="urgencyToggle" onclick="toggleUrgency()">
+                <div class="toggle-knob"></div>
+              </div>
+              <div class="urgency-text">
+                <strong>⚡ Activate Urgency Badge</strong>
+                <small>Your listing will appear at the top with a prominent badge — activate if it's urgent</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+          <a href="listing-detail.html" class="btn btn-ghost">Preview Listing →</a>
+          <button class="btn btn-primary" onclick="publishListing()">Publish Listing</button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Preview -->
+      <div>
+        <div class="preview-card">
+          <div class="preview-title">Listing Preview</div>
+          <div class="listing-card" id="previewCard">
+            <div class="card-img" id="previewImg">📦</div>
+            <div class="card-body">
+              <div class="card-badges">
+                <span class="badge badge-donate" id="previewBadge">Donate</span>
+              </div>
+              <div class="card-title" id="previewTitle">Listing Title</div>
+              <div class="card-sub" id="previewSub">Field · Condition</div>
+              <div class="card-footer">
+                <div class="card-user">
+                  <div class="avatar" style="width:26px;height:26px;font-size:9px;">FA</div>
+                  <span class="card-user-name">Fatima Ahmed</span>
+                </div>
+                <span class="card-rating">★ 4.9</span>
+              </div>
+              <div class="card-btn">Request</div>
+            </div>
+          </div>
+          <div style="margin-top:14px;padding:10px 14px;background:var(--bg);border-radius:var(--radius);font-size:12px;color:var(--text3);">
+            This is how your listing will appear to other students
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="api.js"></script>
+<script>
+//  التحكم في القائمة الجانبية
+document.getElementById('hamburger').addEventListener('click', function() {
+  document.getElementById('mobileNav').classList.toggle('open');
+});
+
+var urgencyOn = false;
+
+//  اختيار نوع التبادل (تبرع/تبديل/بيع)
+function selectType(btn, type) {
+  document.querySelectorAll('.type-select-item').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('priceField').classList.toggle('show', type === 'sell');
+  var badges = { donate: 'badge-donate', swap: 'badge-swap', sell: 'badge-sell' };
+  var labels = { donate: 'Donate', swap: 'Swap', sell: 'Sell' };
+  var pb = document.getElementById('previewBadge');
+  pb.className = 'badge ' + badges[type];
+  pb.textContent = labels[type];
+}
+
+//  اختيار حالة المنتج
+function selectCondition(btn) {
+  document.querySelectorAll('.condition-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+//  تفعيل خاصية "عاجل" وتغيير شكل المعاينة
+function toggleUrgency() {
+  urgencyOn = !urgencyOn;
+  document.getElementById('urgencyToggle').classList.toggle('on', urgencyOn);
+  document.getElementById('previewCard').classList.toggle('urgent-card', urgencyOn);
+}
+
+//  تحديث المعاينة بناءً على العنوان والمجال الأكاديمي
+function updatePreview() {
+  var title = document.getElementById('listingTitle').value || 'Listing Title';
+  var domain = document.getElementById('listingDomain').value || 'Field';
+  document.getElementById('previewTitle').textContent = title;
+  document.getElementById('previewSub').textContent = domain + ' · Excellent';
+  var emojis = { '⚕️ Medical': '📚', '⚙️ Engineering': '⚙️', '📖 Humanities': '📖' };
+  document.getElementById('previewImg').textContent = emojis[domain] || '📦';
+}
+
+var listingImagesBase64 = [null, null];
+
+// رفع الصور الحقيقي وعرض معاينة
+function handleImageUpload(input, zoneId, index) {
+  if (input.files && input.files[0]) {
+    var file = input.files[0];
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('File size exceeds 5MB limit');
+      input.value = '';
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var zone = document.getElementById(zoneId);
+      // عرض الصورة بدلاً من الأيقونة بستايل يملأ المربع بشكل متناسق ومريح للعين
+      zone.innerHTML = '<img src="' + e.target.result + '" style="width:100%; height:140px; object-fit:contain; border-radius:6px; background-color: var(--white);">';
+      zone.style.padding = '8px';
+      zone.style.borderColor = 'var(--purple)';
+      zone.style.background = 'var(--purple-lt)';
+      // تخزين الصورة كـ Base64 لنرسلها لاحقاً للباك إند
+      listingImagesBase64[index] = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+//  نشر الإعلان محلياً للتجربة قبل ربطه بالباك إند
+async function publishListing() {
+  var title = document.getElementById('listingTitle').value.trim();
+  var domainRaw = document.getElementById('listingDomain').value;
+  
+  if (!title || !domainRaw) {
+    showToast('Please enter title and select an academic field');
+    if (!title) document.getElementById('listingTitle').classList.add('error');
+    return;
+  }
+
+  var domainCode = 'medical';
+  if (domainRaw.includes('Engineering')) domainCode = 'engineering';
+  if (domainRaw.includes('Humanities') || domainRaw.includes('Arts')) domainCode = 'arts';
+
+  var type = 'donate';
+  var activeType = document.querySelector('.type-select-item.active');
+  if (activeType) {
+    if (activeType.textContent.includes('Swap')) type = 'swap';
+    if (activeType.textContent.includes('Sell')) type = 'sell';
+  }
+
+  var condition = 'Excellent';
+  var activeCond = document.querySelector('.condition-btn.active');
+  if (activeCond) condition = activeCond.textContent;
+
+  var conditionMap = {
+    'Excellent': 'excellent',
+    'Very Good': 'very_good',
+    'Good': 'good',
+    'Acceptable': 'acceptable'
+  };
+
+  var payload = {
+    title: title,
+    description: document.getElementById('descInput') ? (document.getElementById('descInput').value.trim() || 'No description provided') : 'No description provided',
+    domain: domainCode,
+    category: 'other',
+    type: type,
+    price: 0,
+    condition: conditionMap[condition] || 'good',
+    is_urgent: urgencyOn,
+    images: listingImagesBase64.filter(function(img) { return img !== null; })
+  };
+
+  try {
+    await ListingsAPI.create(payload);
+    
+    // We can also save it locally just so the user sees it in their "local" list for the session if needed, 
+    // but better to just redirect to the real listings page!
+    showToast('Listing published successfully! Redirecting...');
+    setTimeout(function() { window.location.href = 'listings.html?domain=' + domainCode; }, 1500);
+  } catch (error) {
+    console.error(error);
+    showToast('Failed to publish: ' + (error.message || 'Server error'), 'error');
+  }
+}
+
+//  إظهار رسالة عائمة للمستخدم
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>
