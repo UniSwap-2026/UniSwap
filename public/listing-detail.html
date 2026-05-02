@@ -1,258 +1,324 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UniSwap — Listing Details</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniSwap — Listing Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
 
-<!-- NAVBAR -->
-<nav class="navbar">
+    <nav class="navbar">
   <div class="container">
     <div class="navbar-inner">
       <a href="index.html" class="logo">Uni<span>Swap</span></a>
-       
-      <div class="nav-actions">
-        <a href="login.html" class="btn btn-outline">Login</a>
-        <a href="login.html" class="btn btn-primary">Sign Up Free</a>
-      </div>
-      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+      <ul class="nav-links">
+        <li><a href="listings.html">Announcements</a></li>                
+        <li><a href="research-hub.html">Research Hub</a></li>
+        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
+      </ul>
+       <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
+
     </div>
-  </div>
-  <div class="mobile-nav" id="mobileNav">
-    <a href="listings.html?domain=medical">Medical</a><a href="listings.html?domain=eng">Engineering</a><a href="listings.html?domain=arts">Arts</a>
-    <a href="research-hub.html">Research Hub</a>
-    <a href="#" style="color:var(--teal);font-weight:600;">⚡ Urgent Needs</a>
-    
   </div>
 </nav>
+    
+    <!-- CONTENT -->
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="listings.html?domain=medical">Medical</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="listings.html">Books & References</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>Gray's Anatomy</span>
+      </nav>
 
-<!-- CONTENT -->
-<div class="container">
-
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb">
-    <a href="index.html">Home</a>
-    <span class="breadcrumb-sep">›</span>
-    <a href="listings.html?domain=medical">Medical</a>
-    <span class="breadcrumb-sep">›</span>
-    <a href="listings.html">Books & References</a>
-    <span class="breadcrumb-sep">›</span>
-    <span>Gray's Anatomy</span>
-  </nav>
-
-  <!-- Detail layout -->
-  <div class="detail-layout">
-
-    <!-- LEFT COLUMN -->
-    <div>
-
-      <!-- Image -->
-      <div class="img-main" id="mainImg">
-        📚
-        <div class="img-badge"><span class="badge badge-urgent">⚡ Urgent</span></div>
-      </div>
-      <div class="img-thumbs">
-        <div class="img-thumb active" onclick="changeImg(this, '📚')">📚</div>
-        <div class="img-thumb" onclick="changeImg(this, '📖')">📖</div>
-      </div>
-
-      <!-- Info -->
-      <div class="info-card">
-        <div class="info-badges">
-          <span class="badge badge-swap">Swap</span>
-          <span class="badge badge-medical">Medical</span>
-          <span class="badge badge-condition">Excellent</span>
-          <span class="badge badge-urgent">⚡ Urgent</span>
-        </div>
-        <h1>Gray's Anatomy — 42nd Edition</h1>
-
-        <div class="meta-grid">
-          <div class="meta-item"><div class="meta-label">Faculty</div><div class="meta-value">Medicine</div></div>
-          <div class="meta-item"><div class="meta-label">Year</div><div class="meta-value">Second Year</div></div>
-          <div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">Building B</div></div>
-          <div class="meta-item"><div class="meta-label">Posted</div><div class="meta-value">2 days ago</div></div>
-        </div>
-
-        <div class="desc-section">
-          <h3>Description</h3>
-          <p class="desc-text">
-            Gray's Anatomy 42nd edition, excellent condition — no scratches or markings. Used for just one semester. Looking to swap for Robbins Pathology or any similar level book. Urgent because the exam is coming up.
-          </p>
-        </div>
-      </div>
-
-      <!-- Seller -->
-      <div class="seller-card">
-        <div class="seller-avatar">FA</div>
-        <div class="seller-info">
-          <div class="seller-name">Fatima Ahmed</div>
-          <div class="seller-meta">Medicine · Second year · Building B</div>
-          <div class="seller-badges">
-            <span class="badge-verified">✓ Verified</span>
-            <span class="badge-trust">★ 230 Trust points</span>
-          </div>
-        </div>
-        <div style="text-align:center;flex-shrink:0;">
-          <div class="seller-rating">★ 4.9</div>
-          <div class="seller-rating-count">12 ratings</div>
-        </div>
-      </div>
-
-      <!-- Similar -->
-      <div class="similar-section">
-        <h3>Similar Listings</h3>
-        <div class="similar-grid">
-          <a href="listing-detail.html" class="similar-card">
-            <div class="similar-img">🩺</div>
-            <div><div class="similar-title">Atlas of Human Anatomy — Netter</div><div class="similar-sub">Swap · Medical</div></div>
-            <span class="badge badge-swap" style="margin-right:auto;font-size:11px;">Swap</span>
-          </a>
-          <a href="listing-detail.html" class="similar-card">
-            <div class="similar-img">📗</div>
-            <div><div class="similar-title">Robbins Basic Pathology</div><div class="similar-sub">Donation · Medical</div></div>
-            <span class="badge badge-donate" style="margin-right:auto;font-size:11px;">Donate</span>
-          </a>
-          <a href="listing-detail.html" class="similar-card">
-            <div class="similar-img">💊</div>
-            <div><div class="similar-title">Pharmacology Katzung</div><div class="similar-sub">Sell · 120 EGP</div></div>
-            <span class="badge badge-sell" style="margin-right:auto;font-size:11px;">Sell</span>
-          </a>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div>
-      <div class="action-card">
-
-        <!-- Status -->
-        <div style="margin-bottom:20px;">
-          <div class="status-row">
-            <span class="status-key">Listing Status</span>
-            <span class="badge badge-available">Available</span>
-          </div>
-          <div class="status-row">
-            <span class="status-key">Pending requests</span>
-            <span class="status-val">3 pending requests</span>
-          </div>
-          <div class="status-row" style="border:none;">
-            <span class="status-key">Last active</span>
-            <span class="status-val" style="color:var(--text3);font-weight:400;">2 hours ago</span>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- Type selector -->
-        <div class="type-label">Request method</div>
-        <div class="type-options">
-          <button class="type-option active" data-type="swap" onclick="selectType(this)">
-            <div class="type-radio"><div class="type-radio-dot"></div></div>
-            <div class="type-option-text">
-              <strong>Swap — exchange with another item</strong>
-              <small>Available for this listing</small>
+      <!-- Detail layout -->
+      <div class="detail-layout">
+        <!-- LEFT COLUMN -->
+        <div>
+          <!-- Image -->
+          <div class="img-main" id="mainImg">
+            📚
+            <div class="img-badge">
+              <span class="badge badge-urgent">⚡ Urgent</span>
             </div>
-            <span class="badge badge-available" style="font-size:11px;margin-right:auto;">Available</span>
-          </button>
-          <button class="type-option disabled" onclick="selectType(this)">
-            <div class="type-radio"></div>
-            <div class="type-option-text">
-              <strong>Donate — for free</strong>
-              <small>Not available for this listing</small>
+          </div>
+          <div class="img-thumbs">
+            <div class="img-thumb active" onclick="changeImg(this, '📚')">
+              📚
             </div>
-          </button>
+            <div class="img-thumb" onclick="changeImg(this, '📖')">📖</div>
+          </div>
+
+          <!-- Info -->
+          <div class="info-card">
+            <div class="info-badges">
+              <span class="badge badge-swap">Swap</span>
+              <span class="badge badge-medical">Medical</span>
+              <span class="badge badge-condition">Excellent</span>
+              <span class="badge badge-urgent">⚡ Urgent</span>
+            </div>
+            <h1>Gray's Anatomy — 42nd Edition</h1>
+
+            <div class="meta-grid">
+              <div class="meta-item">
+                <div class="meta-label">Faculty</div>
+                <div class="meta-value">Medicine</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Year</div>
+                <div class="meta-value">Second Year</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Location</div>
+                <div class="meta-value">Building B</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Posted</div>
+                <div class="meta-value">2 days ago</div>
+              </div>
+            </div>
+
+            <div class="desc-section">
+              <h3>Description</h3>
+              <p class="desc-text">
+                Gray's Anatomy 42nd edition, excellent condition — no scratches
+                or markings. Used for just one semester. Looking to swap for
+                Robbins Pathology or any similar level book. Urgent because the
+                exam is coming up.
+              </p>
+            </div>
+          </div>
+
+          <!-- Seller -->
+          <div class="seller-card">
+            <div class="seller-avatar">FA</div>
+            <div class="seller-info">
+              <div class="seller-name">Fatima Ahmed</div>
+              <div class="seller-meta">Medicine · Second year · Building B</div>
+              <div class="seller-badges">
+                <span class="badge-verified">✓ Verified</span>
+                <span class="badge-trust">★ 230 Trust points</span>
+              </div>
+            </div>
+            <div style="text-align: center; flex-shrink: 0">
+              <div class="seller-rating">★ 4.9</div>
+              <div class="seller-rating-count">12 ratings</div>
+            </div>
+          </div>
+
+          <!-- Similar -->
+          <div class="similar-section">
+            <h3>Similar Listings</h3>
+            <div class="similar-grid">
+              <a href="listing-detail.html" class="similar-card">
+                <div class="similar-img">🩺</div>
+                <div>
+                  <div class="similar-title">
+                    Atlas of Human Anatomy — Netter
+                  </div>
+                  <div class="similar-sub">Swap · Medical</div>
+                </div>
+                <span
+                  class="badge badge-swap"
+                  style="margin-right: auto; font-size: 11px"
+                  >Swap</span
+                >
+              </a>
+              <a href="listing-detail.html" class="similar-card">
+                <div class="similar-img">📗</div>
+                <div>
+                  <div class="similar-title">Robbins Basic Pathology</div>
+                  <div class="similar-sub">Donation · Medical</div>
+                </div>
+                <span
+                  class="badge badge-donate"
+                  style="margin-right: auto; font-size: 11px"
+                  >Donate</span
+                >
+              </a>
+              <a href="listing-detail.html" class="similar-card">
+                <div class="similar-img">💊</div>
+                <div>
+                  <div class="similar-title">Pharmacology Katzung</div>
+                  <div class="similar-sub">Sell · 120 EGP</div>
+                </div>
+                <span
+                  class="badge badge-sell"
+                  style="margin-right: auto; font-size: 11px"
+                  >Sell</span
+                >
+              </a>
+            </div>
+          </div>
         </div>
 
-        <!-- Message -->
-        <div class="msg-label">Message to seller</div>
-        <textarea class="msg-input" id="msgInput" placeholder="Write a short message — e.g. I have Robbins in similar condition, would you swap?"></textarea>
+        <!-- RIGHT COLUMN -->
+        <div>
+          <div class="action-card">
+            <!-- Status -->
+            <div style="margin-bottom: 20px">
+              <div class="status-row">
+                <span class="status-key">Listing Status</span>
+                <span class="badge badge-available">Available</span>
+              </div>
+              <div class="status-row">
+                <span class="status-key">Pending requests</span>
+                <span class="status-val">3 pending requests</span>
+              </div>
+              <div class="status-row" style="border: none">
+                <span class="status-key">Last active</span>
+                <span
+                  class="status-val"
+                  style="color: var(--text3); font-weight: 400"
+                  >2 hours ago</span
+                >
+              </div>
+            </div>
 
-        <!-- Submit -->
-        <button class="submit-btn" id="submitBtn" onclick="sendRequest()">Send Request</button>
+            <div class="divider"></div>
 
-        <div class="hint">
-          After acceptance, a chat will open with the seller and you will exchange the confirmation code face to face.
+            <!-- Type selector -->
+            <div class="type-label">Request method</div>
+            <div class="type-options">
+              <button
+                class="type-option active"
+                data-type="swap"
+                onclick="selectType(this)"
+              >
+                <div class="type-radio"><div class="type-radio-dot"></div></div>
+                <div class="type-option-text">
+                  <strong>Swap — exchange with another item</strong>
+                  <small>Available for this listing</small>
+                </div>
+                <span
+                  class="badge badge-available"
+                  style="font-size: 11px; margin-right: auto"
+                  >Available</span
+                >
+              </button>
+              <button class="type-option disabled" onclick="selectType(this)">
+                <div class="type-radio"></div>
+                <div class="type-option-text">
+                  <strong>Donate — for free</strong>
+                  <small>Not available for this listing</small>
+                </div>
+              </button>
+            </div>
+
+            <!-- Message -->
+            <div class="msg-label">Message to seller</div>
+            <textarea
+              class="msg-input"
+              id="msgInput"
+              placeholder="Write a short message — e.g. I have Robbins in similar condition, would you swap?"
+            ></textarea>
+
+            <!-- Submit -->
+            <button class="submit-btn" id="submitBtn" onclick="sendRequest()">
+              Send Request
+            </button>
+
+            <div class="hint">
+              After acceptance, a chat will open with the seller and you will
+              exchange the confirmation code face to face.
+            </div>
+          </div>
         </div>
-
       </div>
     </div>
 
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="container">
-    <div class="footer-inner">
-      <a href="index.html" class="logo">Uni<span>Swap</span></a>
-      <div class="footer-links">
-        <a href="#">About</a><a href="#">Contact</a><a href="#">Terms of use</a>
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <div class="footer-inner">
+          <a href="index.html" class="logo">Uni<span>Swap</span></a>
+          <div class="footer-links">
+            <a href="#">About</a><a href="#">Contact</a
+            ><a href="#">Terms of use</a>
+          </div>
+          <div class="footer-copy">UniSwap © 2025 — Graduation Project</div>
+        </div>
       </div>
-      <div class="footer-copy">UniSwap © 2025 — Graduation Project</div>
-    </div>
-  </div>
-</footer>
+    </footer>
 
-<div class="toast" id="toast"></div>
+    <div class="toast" id="toast"></div>
 
-<script>
-document.getElementById('hamburger').addEventListener('click', function() {
-  document.getElementById('mobileNav').classList.toggle('open');
-});
+    <script>
+      document
+        .getElementById("hamburger")
+        .addEventListener("click", function () {
+          document.getElementById("mobileNav").classList.toggle("open");
+        });
 
-function changeImg(thumb, emoji) {
-  var main = document.getElementById('mainImg');
-  // Update only the emoji text node (first text node), preserve the badge div
-  var nodes = main.childNodes;
-  for (var i = 0; i < nodes.length; i++) {
-    if (nodes[i].nodeType === 3) { // Text node
-      nodes[i].textContent = '\n        ' + emoji + '\n        ';
-      break;
-    }
-  }
-  document.querySelectorAll('.img-thumb').forEach(function(t) { t.classList.remove('active'); });
-  thumb.classList.add('active');
-}
+      function changeImg(thumb, emoji) {
+        var main = document.getElementById("mainImg");
+        // Update only the emoji text node (first text node), preserve the badge div
+        var nodes = main.childNodes;
+        for (var i = 0; i < nodes.length; i++) {
+          if (nodes[i].nodeType === 3) {
+            // Text node
+            nodes[i].textContent = "\n        " + emoji + "\n        ";
+            break;
+          }
+        }
+        document.querySelectorAll(".img-thumb").forEach(function (t) {
+          t.classList.remove("active");
+        });
+        thumb.classList.add("active");
+      }
 
-function selectType(option) {
-  if (option.classList.contains('disabled')) return;
-  document.querySelectorAll('.type-option').forEach(function(o) { o.classList.remove('active'); });
-  option.classList.add('active');
-}
+      function selectType(option) {
+        if (option.classList.contains("disabled")) return;
+        document.querySelectorAll(".type-option").forEach(function (o) {
+          o.classList.remove("active");
+        });
+        option.classList.add("active");
+      }
 
-function sendRequest() {
-  var btn = document.getElementById('submitBtn');
-  var msg = document.getElementById('msgInput').value.trim();
-  if (!msg) {
-    document.getElementById('msgInput').style.borderColor = '#e24b4a';
-    document.getElementById('msgInput').placeholder = 'Please write a message to the seller first';
-    document.getElementById('msgInput').focus();
-    return;
-  }
-  document.getElementById('msgInput').style.borderColor = '';
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-  btn.style.opacity = '.7';
-  setTimeout(function() {
-    btn.textContent = '✓ Sent';
-    btn.style.opacity = '1';
-    btn.classList.add('success');
-    showToast('✓ Request sent — the seller will contact you soon!');
-  }, 1200);
-}
+      function sendRequest() {
+        var btn = document.getElementById("submitBtn");
+        var msg = document.getElementById("msgInput").value.trim();
+        if (!msg) {
+          document.getElementById("msgInput").style.borderColor = "#e24b4a";
+          document.getElementById("msgInput").placeholder =
+            "Please write a message to the seller first";
+          document.getElementById("msgInput").focus();
+          return;
+        }
+        document.getElementById("msgInput").style.borderColor = "";
+        btn.disabled = true;
+        btn.textContent = "Sending...";
+        btn.style.opacity = ".7";
+        setTimeout(function () {
+          btn.textContent = "✓ Sent";
+          btn.style.opacity = "1";
+          btn.classList.add("success");
+          showToast("✓ Request sent — the seller will contact you soon!");
+        }, 1200);
+      }
 
-function showToast(msg) {
-  var toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(function() { toast.classList.remove('show'); }, 3500);
-}
-</script>
-</body>
+      function showToast(msg) {
+        var toast = document.getElementById("toast");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(function () {
+          toast.classList.remove("show");
+        }, 3500);
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
 </html>
