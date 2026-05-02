@@ -1,353 +1,427 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UniSwap — Needs Board</title>
-<link rel="stylesheet" href="style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="api.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: #fbfbf9; color: #282724; }
-  :root {
-    --bg: #fbfbf9;
-    --white: #ffffff;
-    --green: #00a86b;
-    --green-lt: #e0f2e8;
-    --navy: #1a3a5c;
-    --text: #2e2b28;
-    --text2: #5b5956;
-    --text3: #8a8880;
-    --border: #e6e2db;
-    --amber: #ff7e33;
-    --amber-lt: #fff0e6;
-  }
-  .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 18px; border-radius: 40px; font-weight: 600; font-size: 13px; transition: all .2s; cursor: pointer; border: none; font-family: inherit; text-decoration: none; }
-  .btn-primary { background: #1a3a5c; color: white; }
-  .btn-primary:hover { background: #008a56; }
-  .btn-outline { background: transparent; border: 1.5px solid #e0ddd6; color: #2e2b28; }
-  .btn-outline:hover { border-color: #00a86b; color: #00a86b; background: #f0faf4; }
-  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text2); }
-  .btn-white { background: white; color: #1a3a5c; }
-  .btn-sm { padding: 5px 12px; font-size: 12px; }
-  .badge { font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 20px; background: #f0efea; color: #514e4b; display: inline-block; }
-  .badge-medical { background: #e0f2fe; color: #0369a1; }
-  .badge-eng { background: #e0e7ff; color: #4338ca; }
-  .badge-arts { background: #fae8ff; color: #a21caf; }
-  .badge-urgent { background: #ffedd5; color: #c2410c; }
-  /* ════════════════════════════════════════════
-   NAVBAR — Breadcrumb
-════════════════════════════════════════════ */
-.breadcrumb {
+.needs-header {
+  background: var(--navy);
+  padding: 40px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+.needs-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(15,110,86,.28) 0%, transparent 70%);
+  pointer-events: none;
+}
+.needs-header-inner {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: 24px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+  position: relative;
 }
-.breadcrumb-link {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text3);
-  text-decoration: none;
-  transition: color .15s;
+.needs-header h1 { font-size: 26px; font-weight: 900; color: #fff; }
+.needs-header p  { font-size: 14px; color: rgba(255,255,255,.6); margin-top: 4px; }
+.needs-search { max-width: 600px; margin-bottom: 24px; position: relative; }
+.needs-search input {
+  width: 100%; height: 48px;
+  background: rgba(255,255,255,.1);
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: var(--radius);
+  padding: 0 16px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 15px; color: #fff; outline: none;
 }
-.breadcrumb-link:hover { color: var(--navy); }
-.breadcrumb-sep {
-  font-size: 13px;
-  color: var(--border);
-  user-select: none;
+.needs-search input::placeholder { color: rgba(255,255,255,.45); }
+.needs-search input:focus { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.4); }
+.post-need-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 28px; position: relative; }
+.post-need-bar input {
+  flex: 2; min-width: 200px; height: 44px; padding: 0 16px;
+  background: rgba(255,255,255,.1);
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: var(--radius);
+  font-family: 'Cairo', sans-serif; font-size: 14px; color: #fff; outline: none;
 }
-.breadcrumb-current {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--navy);
+.post-need-bar input::placeholder { color: rgba(255,255,255,.45); }
+.quick-select {
+  height: 44px; padding: 0 14px;
+  background: rgba(255,255,255,.1);
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: var(--radius);
+  font-family: 'Cairo', sans-serif; font-size: 14px; color: #fff; outline: none; cursor: pointer;
 }
-  /* .navbar { background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(4px); background: rgba(255,255,255,.95); }
-  .navbar-inner { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }
-  .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: #1a2e1a; cursor: pointer; }
-  .logo span { color: #2563a8; }
-  .nav-links { display: flex; gap: 28px; list-style: none; }
-  .nav-links a { text-decoration: none; font-weight: 500; font-size: 14px; color: #3f3e3b; transition: color .1s; cursor: pointer; }
-  .nav-links a.active, .nav-links a:hover { color: #1a3a5c; }
-  .nav-actions { display: flex; gap: 12px; }
-  .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; }
-  .hamburger span { width: 24px; height: 2px; background: #1f1e1c; }
-  .mobile-nav { display: none; flex-direction: column; background: white; padding: 16px; gap: 14px; border-top: 1px solid var(--border); }
-  @media (max-width: 768px) { .nav-links, .nav-actions { display: none; } .hamburger { display: flex; } .mobile-nav.open { display: flex; } .needs-grid { grid-template-columns: 1fr; } } */
-  .needs-header { background: var(--navy); padding: 48px 0 40px; color: white; }
-  .needs-header-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 32px; }
-  .needs-header h1 { font-size: 32px; font-weight: 800; letter-spacing: -.5px; margin-bottom: 6px; }
-  .needs-header p { opacity: .8; font-size: 14px; }
-  .needs-search { background: rgba(255,255,255,.15); border-radius: 60px; padding: 4px 16px; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); max-width: 380px; margin-top: 12px; }
-  .needs-search-icon { font-size: 18px; line-height: 1; }
-  .needs-search input { background: transparent; border: none; padding: 12px 0; color: white; width: 100%; outline: none; font-size: 14px; }
-  .needs-search input::placeholder { color: rgba(255,255,255,.6); }
-  .post-need-bar { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; align-items: center; }
-  .post-need-bar input { flex: 2; min-width: 200px; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); border-radius: 40px; padding: 10px 18px; color: white; font-size: 13px; outline: none; }
-  .post-need-bar input::placeholder { color: #cdddd0; }
-  .post-need-bar select { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); border-radius: 40px; padding: 10px 18px; color: white; font-size: 13px; outline: none; cursor: pointer; font-family: inherit; }
-  .post-need-bar select option { background: #1a3a5c; color: white; }
-  .needs-body { padding: 48px 0 64px; }
-  .needs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-top: 20px; }
-  .need-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.02), 0 0 0 1px #f0eee9; transition: transform .2s, box-shadow .2s; }
-  .need-card:hover { transform: translateY(-3px); box-shadow: 0 20px 30px -12px rgba(0,0,0,.08), 0 0 0 1px #e0ddd6; }
-  .need-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 6px; flex-wrap: wrap; }
-  .need-time { font-size: 10px; color: var(--text3); }
-  .need-card-title { font-size: 17px; font-weight: 700; color: #1f2c1c; margin-bottom: 8px; line-height: 1.3; }
-  .need-card-desc { font-size: 13px; color: var(--text2); line-height: 1.4; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .need-card-user { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
-  .avatar { width: 28px; height: 28px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 10px; color: #2c5f2d; background: #dcfce7; }
-  .need-contact-btn { width: 100%; background: #f4f7f2; border: none; padding: 10px; border-radius: 28px; font-weight: 600; font-size: 12px; color: #2e7d32; cursor: pointer; transition: .15s; }
-  .need-contact-btn:hover { background: #dcecd5; }
-  .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 48px; flex-wrap: wrap; }
-  .page-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border); background: white; font-weight: 600; cursor: pointer; }
-  .page-btn.active { background: #00a86b; border-color: #00a86b; color: white; }
-  .match-banner { background: white; border-radius: 20px; padding: 14px 20px; margin-bottom: 28px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; box-shadow: 0 5px 18px rgba(0,0,0,.04), 0 0 0 1px #d9f0e4; border-left: 4px solid #00a86b; }
-  .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; align-items: center; }
-  .filter-chip { padding: 6px 14px; border-radius: 30px; border: 1.5px solid var(--border); background: white; font-weight: 600; font-size: 13px; cursor: pointer; }
-  .filter-chip.active { background: #e6f1fb; border-color: #1a3a5c; color: #1a3a5c; }
-  .results-info { font-size: 13px; color: #6d6b66; margin-right: auto; }
-  .empty-state { text-align: center; padding: 60px 20px; grid-column: 1/-1; background: #ffffffcc; border-radius: 28px; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 400; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal-box { background: #fff; border-radius: 28px; padding: 28px; width: 100%; max-width: 500px; transform: scale(.96); transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
-  .form-group { margin-bottom: 16px; }
-  .form-row { display: flex; gap: 14px; flex-wrap: wrap; }
-  .form-label { font-weight: 600; font-size: 12px; color: #4e4c49; margin-bottom: 5px; display: block; }
-  .form-input, .form-textarea, .modal-box select { width: 100%; padding: 12px 14px; border: 1.5px solid #e9e5de; border-radius: 14px; font-family: 'Inter', sans-serif; outline: none; font-size: 13px; }
-  .form-input:focus { border-color: #00a86b; }
-  .ai-fab { position: fixed; bottom: 28px; right: 28px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #1a3a5c, #2563a8); color: #fff; border: none; cursor: pointer; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(39,80,10,.4); z-index: 200; }
-  .ai-drawer { position: fixed; bottom: 0; right: 0; width: 380px; max-height: 70vh; background: #fff; border-radius: 20px 20px 0 0; box-shadow: 0 -8px 40px rgba(0,0,0,.15); z-index: 300; display: flex; flex-direction: column; transform: translateY(100%); transition: transform .35s; }
-  .ai-drawer.open { transform: translateY(0); }
-  .ai-drawer-header { background: linear-gradient(135deg, #1a3a5c, #2563a8); ; border-radius: 20px 20px 0 0; padding: 16px 20px; display: flex; align-items: center; gap: 8px; color: white; }
-  .ai-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
-  .ai-msg { max-width: 85%; padding: 10px 13px; border-radius: 14px; font-size: 13px; }
-  .ai-msg.bot { background: #f0f4ff; align-self: flex-start; border-radius: 4px 14px 14px 14px; }
-  .ai-msg.user { background: #27500a; color: white; align-self: flex-end; border-radius: 14px 14px 4px 14px; }
-  .ai-input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #e8e5df; }
-  .ai-input { flex: 1; border: 1.5px solid #e0ddd6; border-radius: 28px; padding: 10px 14px; font-family: inherit; outline: none; }
-  .ai-send { background: #1a3a5c; ; border: none; border-radius: 28px; width: 38px; color: white; cursor: pointer; }
-  .toast { visibility: hidden; min-width: 220px; background: #23201d; color: white; text-align: center; border-radius: 60px; padding: 12px 20px; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 500; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity .2s; }
-  .toast.show { visibility: visible; opacity: 1; }
-  .toast-success { background: #00a86b; }
-  footer { background: #ffffff; color: #4a4845;color: #ccddc8; padding: 32px 0; margin-top: 40px; }
-  .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; align-items: center; }
-  .footer-links a { color: rgba(255,255,255,.45); text-decoration: none; margin: 0 8px; cursor: pointer; }
+.quick-select option { background: var(--navy); color: #fff; }
+.needs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.need-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: transform .2s, box-shadow .2s;
+}
+.need-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.need-card.is-urgent { border-top: 3px solid #ef9f27; }
+.need-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.need-card-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+.need-card-title { font-size: 15px; font-weight: 800; color: var(--navy); line-height: 1.4; }
+.need-card-desc { font-size: 13px; color: var(--text3); line-height: 1.6; }
+.need-card-user {
+  display: flex; align-items: center; gap: 8px;
+  padding-top: 10px; border-top: 1px solid var(--border);
+}
+.need-card-user .avatar { width: 28px; height: 28px; font-size: 10px; }
+.need-card-user-name { font-size: 13px; color: var(--text2); flex: 1; }
+.need-time { font-size: 11px; color: var(--text3); flex-shrink: 0; }
+.need-contact-btn {
+  width: 100%; padding: 9px; border-radius: 8px;
+  border: 1.5px solid var(--border); background: var(--bg);
+  font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer;
+  color: var(--text2); transition: background .15s, color .15s, border-color .15s;
+}
+.need-contact-btn:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
+.needs-empty {
+  grid-column: 1/-1; text-align: center; padding: 60px 20px;
+  background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg);
+}
+.needs-empty h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.needs-empty p { font-size: 14px; color: var(--text3); margin-bottom: 16px; }
+.match-banner {
+  background: var(--teal-lt); border: 1.5px solid #5DCAA5;
+  border-radius: var(--radius-lg); padding: 14px 18px;
+  display: flex; align-items: center; gap: 14px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.match-banner strong { font-size: 14px; font-weight: 700; color: var(--teal); display: block; }
+.match-banner span { font-size: 13px; color: var(--text2); }
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(26,58,92,.45);
+  backdrop-filter: blur(4px); z-index: 400;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--white); border-radius: var(--radius-lg);
+  padding: 28px; width: 100%; max-width: 480px;
+  box-shadow: var(--shadow-lg);
+  transform: scale(.96); transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-overlay.open .modal-box { transform: scale(1); }
+.form-textarea {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  font-family: 'Cairo', sans-serif; font-size: 14px; color: var(--text);
+  background: var(--bg); outline: none; resize: vertical; min-height: 90px;
+  transition: border-color .2s, background .2s;
+}
+.form-textarea:focus { border-color: var(--navy); background: var(--white); }
+.form-textarea::placeholder { color: var(--text3); }
+.toast-needs {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  background: var(--navy); color: #fff; padding: 12px 24px;
+  border-radius: var(--radius); font-size: 14px; font-weight: 600;
+  box-shadow: var(--shadow-lg); z-index: 999; display: none;
+}
+.toast-needs.show { display: block; }
+.toast-needs.success-toast { background: var(--teal); }
 </style>
 </head>
 <body>
-  <nav class="navbar">
-  <div class="container">
-    <div class="navbar-inner">
-      <a href="index.html" class="logo">Uni<span>Swap</span></a>
-      <ul class="nav-links">
-        <li><a href="listings.html">Announcements</a></li>                
-        <li><a href="research-hub.html">Research Hub</a></li>
-        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
-      </ul>
-       <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
 
-    </div>
-  </div>
-</nav>
-
-<!-- <nav class="navbar">
+<!-- NAVBAR -->
+<nav class="navbar">
   <div class="container">
     <div class="navbar-inner">
       <a href="index.html" class="logo">Uni<span>Swap</span></a>
       <ul class="nav-links">
         <li><a href="listings.html">Announcements</a></li>
         <li><a href="research-hub.html">Research Hub</a></li>
-        <li><a href="needs-board.html" class="active">Needs Board</a></li>
+        <li><a href="needs-board.html" class="needs-link" style="background:var(--teal-lt);">Needs</a></li>
       </ul>
-      <div class="nav-actions">
-        <a href="dashboard.html" class="btn btn-outline">Dashboard</a>
-        <a href="login.html" class="btn btn-primary">Sign Out</a>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
       </div>
-      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
   </div>
-  <div class="mobile-nav" id="mobileNav">
-    <a href="listings.html">Announcements</a>
-    <a href="research-hub.html">Research Hub</a>
-    <a href="needs-board.html" style="color:var(--teal);font-weight:600;">Needs Board</a>
-    <div class="mobile-actions">
-      <a href="dashboard.html" class="btn btn-outline">Dashboard</a>
-      <a href="login.html" class="btn btn-primary">Sign Out</a>
-    </div>
-  </div>
-</nav> -->
+</nav>
 
+<!-- HEADER -->
 <div class="needs-header">
   <div class="container">
     <div class="needs-header-inner">
       <div>
         <h1>Needs Board</h1>
-        <p>Post what you need — get matched instantly with students who have it</p>
+        <p>Post what you need — get matched with students who have it</p>
       </div>
-      <button class="btn btn-white" style="color:#1a3a5c;" onclick="openPostModal()">+ I need something</button>
+      <div class="domain-badges">
+        <span class="domain-badge" id="totalBadge">0 needs</span>
+        <span class="domain-badge urgent" id="urgentBadge">0 urgent</span>
+      </div>
     </div>
     <div class="needs-search">
-      <span class="needs-search-icon"></span>
-      <input type="text" id="needsSearch" placeholder="Search by book, tool, or software..." oninput="applyFiltersAndPagination()">
+      <input type="text" id="needsSearch" placeholder="Search by book, tool, or subject..." oninput="applyFilters()">
     </div>
     <div class="post-need-bar">
-      <input type="text" id="quickNeed" placeholder="Quick post — type the book or tool you need..." onkeydown="if(event.key==='Enter') quickPost()">
-      <select id="quickDomain">
+      <input type="text" id="quickNeed" placeholder="Quick post — type what you need..." onkeydown="if(event.key==='Enter') quickPost()">
+      <select id="quickDomain" class="quick-select">
         <option value="" disabled selected>Domain</option>
         <option value="medical">Medical</option>
-        <option value="eng">Engineering</option>
-        <option value="arts">Literature</option>
+        <option value="engineering">Engineering</option>
+        <option value="arts">Humanities</option>
       </select>
-      <button class="btn btn-white btn-sm" style="color:#1a3a5c;" onclick="quickPost()">Post Need</button>
+      <button class="btn btn-white btn-sm" style="color:var(--navy);" onclick="quickPost()">Post Need</button>
+    </div>
+    <div class="domain-tabs">
+      <button class="domain-tab active" data-filter="all" onclick="setFilter(this,'all')">All</button>
+      <button class="domain-tab" data-filter="medical" onclick="setFilter(this,'medical')">Medical</button>
+      <button class="domain-tab" data-filter="engineering" onclick="setFilter(this,'engineering')">Engineering</button>
+      <button class="domain-tab" data-filter="arts" onclick="setFilter(this,'arts')">Humanities</button>
+      <button class="domain-tab" data-filter="urgent" style="color:#ef9f27;" onclick="setFilter(this,'urgent')">Urgent</button>
     </div>
   </div>
 </div>
 
-<div class="needs-body">
-  <div class="container">
-    <div id="matchBannerContainer"></div>
-    <div class="filter-row">
-      <span class="results-info" id="resultsInfo">0 needs</span>
-      <button class="filter-chip active" data-filter="all" onclick="setFilter(this,'all')">All</button>
-      <button class="filter-chip" data-filter="medical" onclick="setFilter(this,'medical')">Medical</button>
-      <button class="filter-chip" data-filter="eng" onclick="setFilter(this,'eng')">Engineering</button>
-      <button class="filter-chip" data-filter="arts" onclick="setFilter(this,'arts')">Literature</button>
-      <button class="filter-chip" data-filter="urgent" onclick="setFilter(this,'urgent')">Urgent only</button>
-    </div>
-    <div class="needs-grid" id="needsGrid"></div>
-    <div class="pagination" id="paginationContainer"></div>
+<!-- BODY -->
+<div class="container" style="padding-top:32px;padding-bottom:64px;">
+  <div id="matchBannerWrap"></div>
+  <div class="content-header" style="margin-bottom:24px;">
+    <div class="results-count">Showing <strong id="shownCount">0</strong> of <strong id="totalCount">0</strong> needs</div>
+    <button class="btn btn-primary btn-sm" onclick="openPostModal()">+ Post a Need</button>
   </div>
+  <div class="needs-grid" id="needsGrid"></div>
+  <div class="pagination" id="paginationWrap" style="display:none;margin-top:28px;"></div>
 </div>
 
+<!-- POST MODAL -->
 <div class="modal-overlay" id="postModal">
   <div class="modal-box">
-    <div class="modal-title" style="font-weight:800;font-size:20px;">Post a New Need</div>
-    <div class="modal-sub" style="margin-bottom:20px;color:#7b7a75;">Get matched with students</div>
-    <div class="form-group"><label class="form-label">What do you need?</label><input type="text" class="form-input" id="modalNeedTitle" placeholder="e.g. Gray's Anatomy 42nd Edition"></div>
-    <div class="form-row"><div class="form-group" style="flex:1"><label class="form-label">Domain</label><select class="form-input" id="modalDomain"><option value="" disabled selected>Select domain</option><option value="medical">Medical</option><option value="eng">Engineering</option><option value="arts">Literature</option></select></div><div class="form-group" style="flex:1"><label class="form-label">Urgency</label><select class="form-input" id="modalUrgency"><option value="normal">Normal</option><option value="urgent">Urgent</option></select></div></div>
-    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="modalDesc" placeholder="Extra details..."></textarea></div>
-    <div class="modal-actions" style="display:flex;gap:12px;margin-top:20px;"><button class="btn btn-ghost" onclick="closePostModal()">Cancel</button><button class="btn btn-primary" style="background:#00a86b;" onclick="submitNeed()">Post My Need</button></div>
+    <div style="font-size:18px;font-weight:900;color:var(--navy);margin-bottom:4px;">Post a Need</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:20px;">Get matched with students who have what you need</div>
+    <div class="form-group">
+      <label class="form-label">What do you need?</label>
+      <input type="text" class="form-input" id="modalTitle" placeholder="e.g. Gray's Anatomy 42nd Edition">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Domain</label>
+        <select class="form-input" id="modalDomain" style="cursor:pointer;">
+          <option value="" disabled selected>Select domain</option>
+          <option value="medical">Medical</option>
+          <option value="engineering">Engineering</option>
+          <option value="arts">Humanities</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Urgency</label>
+        <select class="form-input" id="modalUrgency" style="cursor:pointer;">
+          <option value="normal">Normal</option>
+          <option value="urgent">Urgent</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description (optional)</label>
+      <textarea class="form-textarea" id="modalDesc" placeholder="Any extra details..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-ghost" onclick="closePostModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitNeed()">Post My Need</button>
+    </div>
   </div>
 </div>
 
-<button class="ai-fab" id="aiFab" onclick="toggleAI()" style="bottom:80px;">AI</button>
-<div class="ai-drawer" id="aiDrawer">
-  <div class="ai-drawer-header"><span>AI Assistant</span><button class="ai-close" style="margin-left:auto;background:none;border:none;color:white;font-size:18px;cursor:pointer;" onclick="toggleAI()">✕</button></div>
-  <div class="ai-messages" id="aiMessages"><div class="ai-msg bot">Hi! I'm your UniSwap assistant. Ask me about resources, posting tips, or matching!</div></div>
-  <div class="ai-quick-btns" style="display:flex;gap:6px;padding:0 12px 8px;"><button class="ai-quick-btn" style="padding:4px 10px;border-radius:20px;border:1px solid #ccc;background:#fff;cursor:pointer;" onclick="quickAsk('What medical books are available?')">Medical books</button><button class="ai-quick-btn" onclick="quickAsk('How to post a need effectively?')">Posting tips</button></div>
-  <div class="ai-input-row"><input class="ai-input" id="aiInput" placeholder="Ask anything..." onkeydown="if(event.key==='Enter') sendAI()"><button class="ai-send" onclick="sendAI()">→</button></div>
-</div>
-
-<footer style="background:#122a44; color:rgba(255,255,255,.6);">
+<footer>
   <div class="container">
     <div class="footer-inner">
-      <a href="index.html" class="logo" style="color:#1a3a5c;">Uni<span style="color:#2563a8;">Swap</span></a>
-      <div class="footer-links"><a href="index.html">About</a><a href="index.html">Contact</a><a href="index.html">Terms</a></div>
-      <div class="footer-copy" style="color:#8a8880;">UniSwap © 2026 — Web Project</div>
+      <a href="index.html" class="logo">Uni<span>Swap</span></a>
+      <div class="footer-links">
+        <a href="#">About Us</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Usage Policy</a>
+      </div>
+      <div class="footer-copy">UniSwap © 2026 — Web Development Project</div>
     </div>
   </div>
 </footer>
-<div class="toast" id="toast"></div>
+
+<div class="toast-needs" id="toast"></div>
 
 <script>
-  let allNeeds = [];
-  let currentFilter = "all";
-  let currentPage = 1;
-  const ITEMS_PER_PAGE = 6;
+if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+  const user = Auth.getUser();
+  if (user) {
+    const initials = user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    document.getElementById('navAvatar').textContent = initials;
+  }
+}
 
-  function renderPagination(totalItems) {
-    const container = document.getElementById("paginationContainer");
-    if (!container) return;
-    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-    if (totalPages <= 1) { container.innerHTML = ""; return; }
-    let html = "";
-    for (let i = 1; i <= totalPages; i++) html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-    container.innerHTML = html;
+let allNeeds = [];
+let currentFilter = 'all';
+const PER_PAGE = 9;
+let currentPage = 1;
+
+function timeAgo(d) {
+  if (!d) return 'Just now';
+  const diff = Date.now() - new Date(d).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'Just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  return Math.floor(h / 24) + 'd ago';
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+const domainMap = { medical: 'Medical', engineering: 'Engineering', arts: 'Humanities' };
+const domainBadge = { medical: 'badge-medical', engineering: 'badge-eng', arts: 'badge-arts' };
+
+function getFiltered() {
+  const q = document.getElementById('needsSearch').value.trim().toLowerCase();
+  return allNeeds.filter(n => {
+    const dOk = currentFilter === 'all' || (currentFilter === 'urgent' ? n.urgent : n.domain === currentFilter);
+    const sOk = !q || n.title.toLowerCase().includes(q);
+    return dOk && sOk;
+  });
+}
+
+function renderGrid() {
+  const filtered = getFiltered();
+  const grid = document.getElementById('needsGrid');
+  const paginated = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+
+  document.getElementById('shownCount').textContent = paginated.length;
+  document.getElementById('totalCount').textContent = filtered.length;
+  document.getElementById('totalBadge').textContent = allNeeds.length + ' needs';
+  document.getElementById('urgentBadge').textContent = allNeeds.filter(n => n.urgent).length + ' urgent';
+
+  grid.innerHTML = '';
+  if (!paginated.length) {
+    grid.innerHTML = `<div class="needs-empty"><h3>No needs found</h3><p>Post what you need and get matched instantly.</p><button class="btn btn-primary" onclick="openPostModal()">Post a Need</button></div>`;
+    renderPagination(0); return;
   }
-  function goToPage(page) { currentPage = page; applyFiltersAndPagination(); }
-  function getFilteredNeeds() {
-    let searchTerm = document.getElementById('needsSearch')?.value.trim().toLowerCase() || "";
-    return allNeeds.filter(need => {
-      let domainMatch = currentFilter === 'all' || (currentFilter === 'urgent' ? need.urgent : need.domain === currentFilter);
-      let searchMatch = searchTerm === "" || need.title.toLowerCase().includes(searchTerm) || need.desc.toLowerCase().includes(searchTerm);
-      return domainMatch && searchMatch;
-    });
+
+  paginated.forEach(n => {
+    const initials = (n.user || 'S').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    grid.innerHTML += `
+      <div class="need-card${n.urgent ? ' is-urgent' : ''}">
+        <div class="need-card-top">
+          <div class="need-card-badges">
+            <span class="badge ${domainBadge[n.domain] || ''}">${domainMap[n.domain] || n.domain}</span>
+            ${n.urgent ? '<span class="badge badge-urgent">Urgent</span>' : ''}
+          </div>
+          <span class="need-time">${timeAgo(n.date)}</span>
+        </div>
+        <div class="need-card-title">${esc(n.title)}</div>
+        ${n.desc ? `<div class="need-card-desc">${esc(n.desc)}</div>` : ''}
+        <div class="need-card-user">
+          <div class="avatar">${initials}</div>
+          <span class="need-card-user-name">${esc(n.user)}</span>
+        </div>
+        <button class="need-contact-btn" onclick="contactNeed('${esc(n.user)}')">I have this — Contact</button>
+      </div>`;
+  });
+  renderPagination(filtered.length);
+}
+
+function renderPagination(total) {
+  const wrap = document.getElementById('paginationWrap');
+  const pages = Math.ceil(total / PER_PAGE);
+  if (pages <= 1) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  wrap.innerHTML = '';
+  for (let i = 1; i <= pages; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+    btn.textContent = i;
+    btn.onclick = () => { currentPage = i; renderGrid(); };
+    wrap.appendChild(btn);
   }
-  function applyFiltersAndPagination() {
-    const filtered = getFilteredNeeds();
-    const totalFiltered = filtered.length;
-    const totalPages = Math.ceil(totalFiltered / ITEMS_PER_PAGE);
-    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
-    if (currentPage < 1) currentPage = 1;
-    const paginated = filtered.slice((currentPage-1)*ITEMS_PER_PAGE, currentPage*ITEMS_PER_PAGE);
-    renderNeedsGrid(paginated);
-    const resultsSpan = document.getElementById("resultsInfo");
-    if(resultsSpan) resultsSpan.innerHTML = totalFiltered === 0 ? "0 needs" : `Showing ${paginated.length} of ${totalFiltered} need${totalFiltered !== 1 ? 's' : ''}`;
-    renderPagination(totalFiltered);
+}
+
+function setFilter(btn, filter) {
+  currentFilter = filter; currentPage = 1;
+  document.querySelectorAll('.domain-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
+}
+
+function applyFilters() { currentPage = 1; renderGrid(); }
+
+function openPostModal() { document.getElementById('postModal').classList.add('open'); }
+function closePostModal() { document.getElementById('postModal').classList.remove('open'); }
+document.getElementById('postModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('postModal')) closePostModal();
+});
+
+function quickPost() {
+  const title = document.getElementById('quickNeed').value.trim();
+  const domain = document.getElementById('quickDomain').value;
+  if (!title || !domain) { showToast('Enter what you need and select a domain'); return; }
+  addNeed({ title, domain, urgent: false, user: 'You', date: new Date().toISOString(), desc: '' });
+  document.getElementById('quickNeed').value = '';
+  document.getElementById('quickDomain').value = '';
+}
+
+function submitNeed() {
+  const title = document.getElementById('modalTitle').value.trim();
+  const domain = document.getElementById('modalDomain').value;
+  const urgent = document.getElementById('modalUrgency').value === 'urgent';
+  const desc = document.getElementById('modalDesc').value.trim();
+  if (!title) { showToast('Please enter what you need'); return; }
+  if (!domain) { showToast('Please select a domain'); return; }
+  addNeed({ title, domain, urgent, user: 'You', date: new Date().toISOString(), desc });
+  closePostModal();
+  document.getElementById('modalTitle').value = '';
+  document.getElementById('modalDesc').value = '';
+}
+
+function addNeed(need) {
+  allNeeds.unshift(need);
+  currentFilter = 'all'; currentPage = 1;
+  document.querySelectorAll('.domain-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.domain-tab[data-filter="all"]').classList.add('active');
+  renderGrid();
+  showToast('Need posted!', true);
+  const match = allNeeds.find(n => n !== need && n.domain === need.domain);
+  if (match) {
+    document.getElementById('matchBannerWrap').innerHTML = `
+      <div class="match-banner">
+        <div style="flex:1;">
+          <strong>Smart Match Found</strong>
+          <span>${esc(match.user)} posted a similar need in ${domainMap[match.domain] || match.domain} — you may connect.</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="this.parentElement.parentElement.innerHTML=''">Dismiss</button>
+      </div>`;
   }
-  function renderNeedsGrid(needsArray) {
-    const grid = document.getElementById("needsGrid");
-    if (!grid) return;
-    if (needsArray.length === 0) {
-      grid.innerHTML = `<div class="empty-state"><div style="font-size:48px;"></div><h3>No needs posted yet</h3><p>Be the first to share what you need!</p><button class="btn btn-primary" onclick="openPostModal()">+ Post a need</button></div>`;
-      return;
-    }
-    grid.innerHTML = needsArray.map(n => `
-      <div class="need-card">
-        <div class="need-card-top"><div style="display:flex;gap:6px;"><span class="badge ${n.domain === 'medical' ? 'badge-medical' : (n.domain === 'eng' ? 'badge-eng' : 'badge-arts')}">${n.domain === 'medical' ? 'Medical' : (n.domain === 'eng' ? 'Engineering' : 'Literature')}</span>${n.urgent ? '<span class="badge badge-urgent">Urgent</span>' : ''}</div><span class="need-time">${n.time}</span></div>
-        <div class="need-card-title">${escapeHtml(n.title)}</div>
-        <div class="need-card-desc">${escapeHtml(n.desc)}</div>
-        <div class="need-card-user"><div class="avatar">${escapeHtml(n.initials)}</div><span>${escapeHtml(n.user)}</span><span style="font-size:11px;color:#f5b042;">★ ${n.rating}</span></div>
-        <button class="need-contact-btn" onclick="contactAndTriggerMatch('${escapeHtml(n.user)}', '${escapeHtml(n.title)}', ${n.id})">I have this — Contact</button>
-      </div>
-    `).join('');
-  }
-  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
-  function showMatchBanner(needTitle, matchedWithUser) {
-    const container = document.getElementById("matchBannerContainer");
-    if(container) container.innerHTML = `<div class="match-banner"><div class="match-banner-icon">⚡</div><div style="flex:1;"><strong style="color:#00a86b;">Match found!</strong><br><span>You have "${escapeHtml(needTitle)}" — ${escapeHtml(matchedWithUser)} needs it.</span></div><button class="btn btn-primary btn-sm" onclick="window.location.href='messages.html'">Contact</button><button class="btn btn-ghost btn-sm" onclick="dismissMatchBanner()">✕</button></div>`;
-  }
-  function dismissMatchBanner() { const c = document.getElementById("matchBannerContainer"); if(c) c.innerHTML = ""; }
-  function contactAndTriggerMatch(userName, needTitle, needId) {
-    const found = allNeeds.find(n => n.id === needId);
-    if(found) { showMatchBanner(found.title, found.user); showToast(`Connected with ${found.user}`, true); }
-    else showToast(`Contact ${userName}`, true);
-  }
-  function submitNeed() {
-    const title = document.getElementById('modalNeedTitle').value.trim();
-    const domain = document.getElementById('modalDomain').value;
-    const urgent = document.getElementById('modalUrgency').value === 'urgent';
-    const desc = document.getElementById('modalDesc').value.trim() || "No description";
-    if(!title || !domain) { showToast("Please fill title and domain", false); return; }
-    allNeeds.unshift({ id: Date.now(), title, desc, domain, urgent, user: "You (current)", initials: "YO", rating: 5.0, time: "Just now" });
-    closePostModal(); document.getElementById('modalNeedTitle').value = ''; document.getElementById('modalDesc').value = '';
-    currentPage = 1; applyFiltersAndPagination(); showToast("Need posted!", true);
-  }
-  function quickPost() {
-    const title = document.getElementById('quickNeed').value.trim();
-    const domainOption = document.getElementById('quickDomain').value;
-    if(!title || !domainOption) { showToast("Select domain and write a need", false); return; }
-    let domain = domainOption === "medical" ? "medical" : (domainOption === "eng" ? "eng" : "arts");
-    allNeeds.unshift({ id: Date.now(), title, desc: "Quick post", domain, urgent: false, user: "You (current)", initials: "YO", rating: 5, time: "Just now" });
-    document.getElementById('quickNeed').value = ''; document.getElementById('quickDomain').value = '';
-    currentPage = 1; applyFiltersAndPagination(); showToast("Posted!", true);
-  }
-  function setFilter(btn, filter) { currentFilter = filter; document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); currentPage=1; applyFiltersAndPagination(); }
-  function openPostModal() { document.getElementById('postModal').classList.add('open'); }
-  function closePostModal() { document.getElementById('postModal').classList.remove('open'); }
-  document.getElementById('postModal')?.addEventListener('click', (e) => { if(e.target === document.getElementById('postModal')) closePostModal(); });
-  function toggleAI() { document.getElementById('aiDrawer').classList.toggle('open'); }
-  function quickAsk(q) { document.getElementById('aiInput').value = q; sendAI(); }
-  function sendAI() { const input = document.getElementById('aiInput'); const msg = input.value.trim(); if(!msg) return; addAIMessage(msg, 'user'); input.value = ''; addAIMessage("UniSwap AI: You can post a need, browse other sections, or click 'I have this' to match instantly.", 'bot'); }
-  function addAIMessage(text, type) { const c = document.getElementById('aiMessages'); const d = document.createElement('div'); d.className = `ai-msg ${type}`; d.innerText = text; c.appendChild(d); c.scrollTop = c.scrollHeight; }
-  function showToast(msg, success) { const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast show' + (success ? ' toast-success' : ''); setTimeout(() => t.className = 'toast', 3000); }
-  document.getElementById('hamburger')?.addEventListener('click', () => document.getElementById('mobileNav').classList.toggle('open'));
-  
-  allNeeds = [];
-  applyFiltersAndPagination();
+}
+
+function contactNeed(user) {
+  showToast('Connecting with ' + user + '...', true);
+  setTimeout(() => window.location.href = 'messages.html', 1000);
+}
+
+function showToast(msg, success) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast-needs show' + (success ? ' success-toast' : '');
+  setTimeout(() => t.className = 'toast-needs', 3000);
+}
+
+renderGrid();
 </script>
 </body>
 </html>
