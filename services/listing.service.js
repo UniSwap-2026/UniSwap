@@ -49,7 +49,7 @@ exports.getById = async (id) => {
 };
 
 exports.create = async (userId, body) => {
-  const { title, description, domain, category, type, price, condition, is_urgent } = body;
+  const { title, description, domain, category, type, price, condition, is_urgent, images } = body;
 
   return Listing.create({
     user_id:   userId,
@@ -57,6 +57,7 @@ exports.create = async (userId, body) => {
     price:     type === 'sell' ? price : null,
     condition,
     is_urgent: is_urgent || false,
+    images:    images || [],
   });
 };
 
