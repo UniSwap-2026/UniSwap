@@ -10,18 +10,13 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar">
   <div class="container">
     <div class="navbar-inner">
       <a href="index.html" class="logo">Uni<span>Swap</span></a>
-      <ul class="nav-links">
-        <li><a href="listings.html">Announcements</a></li>
-        <li><a href="research-hub.html">Research Hub</a></li>
-        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
-      </ul>
-     <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
-
+      <div style="flex:1;font-size:15px;font-weight:700;color:var(--navy);">Add New Listing</div>
+      <a href="dashboard.html" class="btn btn-ghost btn-sm">Cancel</a>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
   </div>
 </nav>
@@ -88,7 +83,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Description</label>
-            <textarea class="form-textarea" placeholder="Describe the item — its condition, edition, reason for swapping..."></textarea>
+            <textarea id="descInput" class="form-textarea" placeholder="Describe the item — its condition, edition, reason for swapping..."></textarea>
           </div>
         </div>
 
@@ -144,16 +139,19 @@
         <div class="form-card">
           <div class="form-card-title">Listing Images (max 2)</div>
           <div class="form-row">
-            <div class="upload-zone" onclick="fakeUpload(this)">
+            <div class="upload-zone" onclick="document.getElementById('imgUpload1').click()" id="zone1">
               <div class="upload-icon">📷</div>
               <div class="upload-title">Upload first image</div>
               <div class="upload-sub">PNG or JPG · Max 5MB</div>
             </div>
-            <div class="upload-zone" onclick="fakeUpload(this)">
+            <input type="file" id="imgUpload1" accept="image/png, image/jpeg" style="display:none;" onchange="handleImageUpload(this, 'zone1', 0)">
+
+            <div class="upload-zone" onclick="document.getElementById('imgUpload2').click()" id="zone2">
               <div class="upload-icon">📷</div>
               <div class="upload-title">Second image (optional)</div>
               <div class="upload-sub">PNG or JPG · Max 5MB</div>
             </div>
+            <input type="file" id="imgUpload2" accept="image/png, image/jpeg" style="display:none;" onchange="handleImageUpload(this, 'zone2', 1)">
           </div>
         </div>
 
@@ -214,6 +212,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="api.js"></script>
 <script>
 //  التحكم في القائمة الجانبية
 document.getElementById('hamburger').addEventListener('click', function() {
@@ -257,29 +256,94 @@ function updatePreview() {
   document.getElementById('previewImg').textContent = emojis[domain] || '📦';
 }
 
-// الكومنت: محاكاة رفع الصور
-function fakeUpload(zone) {
-  zone.innerHTML = '<div class="upload-icon">✅</div><div class="upload-title">Image uploaded</div><div class="upload-sub">Click to replace</div>';
-  zone.style.borderColor = 'var(--green)';
-  zone.style.background = 'var(--green-lt)';
+var listingImagesBase64 = [null, null];
+
+// رفع الصور الحقيقي وعرض معاينة
+function handleImageUpload(input, zoneId, index) {
+  if (input.files && input.files[0]) {
+    var file = input.files[0];
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('File size exceeds 5MB limit');
+      input.value = '';
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var zone = document.getElementById(zoneId);
+      // عرض الصورة بدلاً من الأيقونة بستايل يملأ المربع بشكل متناسق ومريح للعين
+      zone.innerHTML = '<img src="' + e.target.result + '" style="width:100%; height:140px; object-fit:contain; border-radius:6px; background-color: var(--white);">';
+      zone.style.padding = '8px';
+      zone.style.borderColor = 'var(--purple)';
+      zone.style.background = 'var(--purple-lt)';
+      // تخزين الصورة كـ Base64 لنرسلها لاحقاً للباك إند
+      listingImagesBase64[index] = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
-//  نشر الإعلان مع التحقق من العنوان
-function publishListing() {
+//  نشر الإعلان محلياً للتجربة قبل ربطه بالباك إند
+async function publishListing() {
   var title = document.getElementById('listingTitle').value.trim();
-  if (!title) {
-    showToast('Please enter a listing title first');
-    document.getElementById('listingTitle').classList.add('error');
-    document.getElementById('listingTitle').focus();
+  var domainRaw = document.getElementById('listingDomain').value;
+  
+  if (!title || !domainRaw) {
+    showToast('Please enter title and select an academic field');
+    if (!title) document.getElementById('listingTitle').classList.add('error');
     return;
   }
-  showToast('Publishing listing...');
-  setTimeout(function() { window.location.href = 'listing-detail.html'; }, 1200);
+
+  var domainCode = 'medical';
+  if (domainRaw.includes('Engineering')) domainCode = 'engineering';
+  if (domainRaw.includes('Humanities') || domainRaw.includes('Arts')) domainCode = 'arts';
+
+  var type = 'donate';
+  var activeType = document.querySelector('.type-select-item.active');
+  if (activeType) {
+    if (activeType.textContent.includes('Swap')) type = 'swap';
+    if (activeType.textContent.includes('Sell')) type = 'sell';
+  }
+
+  var condition = 'Excellent';
+  var activeCond = document.querySelector('.condition-btn.active');
+  if (activeCond) condition = activeCond.textContent;
+
+  var conditionMap = {
+    'Excellent': 'excellent',
+    'Very Good': 'very_good',
+    'Good': 'good',
+    'Acceptable': 'acceptable'
+  };
+
+  var payload = {
+    title: title,
+    description: document.getElementById('descInput') ? (document.getElementById('descInput').value.trim() || 'No description provided') : 'No description provided',
+    domain: domainCode,
+    category: 'other',
+    type: type,
+    price: 0,
+    condition: conditionMap[condition] || 'good',
+    is_urgent: urgencyOn,
+    images: listingImagesBase64.filter(function(img) { return img !== null; })
+  };
+
+  try {
+    await ListingsAPI.create(payload);
+    
+    // We can also save it locally just so the user sees it in their "local" list for the session if needed, 
+    // but better to just redirect to the real listings page!
+    showToast('Listing published successfully! Redirecting...');
+    setTimeout(function() { window.location.href = 'listings.html?domain=' + domainCode; }, 1500);
+  } catch (error) {
+    console.error(error);
+    showToast('Failed to publish: ' + (error.message || 'Server error'), 'error');
+  }
 }
 
 //  إظهار رسالة عائمة للمستخدم
 function showToast(msg) {
   var t = document.getElementById('toast');
+  if(!t) return;
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(function() { t.classList.remove('show'); }, 3000);
