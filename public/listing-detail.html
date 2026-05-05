@@ -15,19 +15,9 @@
   <div class="container">
     <div class="navbar-inner">
       <a href="index.html" class="logo">Uni<span>Swap</span></a>
-       
-      <div class="nav-actions">
-        <a href="login.html" class="btn btn-outline">Login</a>
-        <a href="login.html" class="btn btn-primary">Sign Up Free</a>
-      </div>
+      
       <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
-  </div>
-  <div class="mobile-nav" id="mobileNav">
-    <a href="listings.html?domain=medical">Medical</a><a href="listings.html?domain=eng">Engineering</a><a href="listings.html?domain=arts">Arts</a>
-    <a href="research-hub.html">Research Hub</a>
-    <a href="#" style="color:var(--teal);font-weight:600;">⚡ Urgent Needs</a>
-    
   </div>
 </nav>
 
@@ -38,11 +28,9 @@
   <nav class="breadcrumb">
     <a href="index.html">Home</a>
     <span class="breadcrumb-sep">›</span>
-    <a href="listings.html?domain=medical">Medical</a>
+    <a href="listings.html">Announcements</a>
     <span class="breadcrumb-sep">›</span>
-    <a href="listings.html">Books & References</a>
-    <span class="breadcrumb-sep">›</span>
-    <span>Gray's Anatomy</span>
+    <span id="detailTitleCrumb">Loading...</span>
   </nav>
 
   <!-- Detail layout -->
@@ -52,49 +40,41 @@
     <div>
 
       <!-- Image -->
-      <div class="img-main" id="mainImg">
+      <div class="img-main" id="mainImg" style="overflow:hidden; display:flex; align-items:center; justify-content:center;">
         📚
-        <div class="img-badge"><span class="badge badge-urgent">⚡ Urgent</span></div>
       </div>
-      <div class="img-thumbs">
+      <div class="img-thumbs" id="detailThumbs">
         <div class="img-thumb active" onclick="changeImg(this, '📚')">📚</div>
-        <div class="img-thumb" onclick="changeImg(this, '📖')">📖</div>
       </div>
 
       <!-- Info -->
       <div class="info-card">
-        <div class="info-badges">
+        <div class="info-badges" id="detailBadges">
           <span class="badge badge-swap">Swap</span>
-          <span class="badge badge-medical">Medical</span>
-          <span class="badge badge-condition">Excellent</span>
-          <span class="badge badge-urgent">⚡ Urgent</span>
         </div>
-        <h1>Gray's Anatomy — 42nd Edition</h1>
+        <h1 id="detailTitle">Loading...</h1>
 
-        <div class="meta-grid">
-          <div class="meta-item"><div class="meta-label">Faculty</div><div class="meta-value">Medicine</div></div>
-          <div class="meta-item"><div class="meta-label">Year</div><div class="meta-value">Second Year</div></div>
-          <div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">Building B</div></div>
-          <div class="meta-item"><div class="meta-label">Posted</div><div class="meta-value">2 days ago</div></div>
+        <div class="meta-grid" id="detailMeta">
+          <!-- Populated dynamically -->
         </div>
 
         <div class="desc-section">
           <h3>Description</h3>
-          <p class="desc-text">
-            Gray's Anatomy 42nd edition, excellent condition — no scratches or markings. Used for just one semester. Looking to swap for Robbins Pathology or any similar level book. Urgent because the exam is coming up.
+          <p class="desc-text" id="detailDesc">
+            Loading description...
           </p>
         </div>
       </div>
 
       <!-- Seller -->
       <div class="seller-card">
-        <div class="seller-avatar">FA</div>
+        <div class="seller-avatar" id="sellerAvatar">--</div>
         <div class="seller-info">
-          <div class="seller-name">Fatima Ahmed</div>
-          <div class="seller-meta">Medicine · Second year · Building B</div>
+          <div class="seller-name" id="sellerName">Loading...</div>
+          <div class="seller-meta" id="sellerMeta">...</div>
           <div class="seller-badges">
-            <span class="badge-verified">✓ Verified</span>
-            <span class="badge-trust">★ 230 Trust points</span>
+            <span class="badge-verified" id="sellerVerified">✓ Verified</span>
+            <span class="badge-trust" id="sellerPoints">★ 0 Trust points</span>
           </div>
         </div>
         <div style="text-align:center;flex-shrink:0;">
@@ -135,15 +115,11 @@
         <div style="margin-bottom:20px;">
           <div class="status-row">
             <span class="status-key">Listing Status</span>
-            <span class="badge badge-available">Available</span>
-          </div>
-          <div class="status-row">
-            <span class="status-key">Pending requests</span>
-            <span class="status-val">3 pending requests</span>
+            <span class="badge badge-available" id="detailStatus">Available</span>
           </div>
           <div class="status-row" style="border:none;">
-            <span class="status-key">Last active</span>
-            <span class="status-val" style="color:var(--text3);font-weight:400;">2 hours ago</span>
+            <span class="status-key">Posted</span>
+            <span class="status-val" id="detailTime" style="color:var(--text3);font-weight:400;">...</span>
           </div>
         </div>
 
@@ -151,27 +127,13 @@
 
         <!-- Type selector -->
         <div class="type-label">Request method</div>
-        <div class="type-options">
-          <button class="type-option active" data-type="swap" onclick="selectType(this)">
-            <div class="type-radio"><div class="type-radio-dot"></div></div>
-            <div class="type-option-text">
-              <strong>Swap — exchange with another item</strong>
-              <small>Available for this listing</small>
-            </div>
-            <span class="badge badge-available" style="font-size:11px;margin-right:auto;">Available</span>
-          </button>
-          <button class="type-option disabled" onclick="selectType(this)">
-            <div class="type-radio"></div>
-            <div class="type-option-text">
-              <strong>Donate — for free</strong>
-              <small>Not available for this listing</small>
-            </div>
-          </button>
+        <div class="type-options" id="detailMethods">
+          <!-- Populated dynamically -->
         </div>
 
         <!-- Message -->
         <div class="msg-label">Message to seller</div>
-        <textarea class="msg-input" id="msgInput" placeholder="Write a short message — e.g. I have Robbins in similar condition, would you swap?"></textarea>
+        <textarea class="msg-input" id="msgInput" placeholder="Write a short message — e.g. I am interested in this listing."></textarea>
 
         <!-- Submit -->
         <button class="submit-btn" id="submitBtn" onclick="sendRequest()">Send Request</button>
@@ -201,23 +163,27 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="api.js"></script>
 <script>
 document.getElementById('hamburger').addEventListener('click', function() {
   document.getElementById('mobileNav').classList.toggle('open');
 });
 
-function changeImg(thumb, emoji) {
+updateNavbar();
+
+// Global variable for current listing
+let currentListingId = new URLSearchParams(window.location.search).get('id');
+
+function changeImg(thumb, srcOrEmoji) {
   var main = document.getElementById('mainImg');
-  // Update only the emoji text node (first text node), preserve the badge div
-  var nodes = main.childNodes;
-  for (var i = 0; i < nodes.length; i++) {
-    if (nodes[i].nodeType === 3) { // Text node
-      nodes[i].textContent = '\n        ' + emoji + '\n        ';
-      break;
-    }
+  if (srcOrEmoji.startsWith('http') || srcOrEmoji.startsWith('data:')) {
+    main.innerHTML = `<img src="${srcOrEmoji}" style="width:100%;height:100%;object-fit:contain;padding:12px;">`;
+  } else {
+    // text/emoji
+    main.innerHTML = `<div style="font-size:48px;">${srcOrEmoji}</div>`;
   }
   document.querySelectorAll('.img-thumb').forEach(function(t) { t.classList.remove('active'); });
-  thumb.classList.add('active');
+  if (thumb) thumb.classList.add('active');
 }
 
 function selectType(option) {
@@ -226,7 +192,13 @@ function selectType(option) {
   option.classList.add('active');
 }
 
-function sendRequest() {
+async function sendRequest() {
+  if (!Auth.isLoggedIn()) {
+    showToast('Please login first', 'error');
+    setTimeout(() => window.location.href = 'login.html', 1500);
+    return;
+  }
+
   var btn = document.getElementById('submitBtn');
   var msg = document.getElementById('msgInput').value.trim();
   if (!msg) {
@@ -239,20 +211,112 @@ function sendRequest() {
   btn.disabled = true;
   btn.textContent = 'Sending...';
   btn.style.opacity = '.7';
-  setTimeout(function() {
+
+  try {
+    const res = await RequestsAPI.send(currentListingId, msg);
     btn.textContent = '✓ Sent';
     btn.style.opacity = '1';
     btn.classList.add('success');
-    showToast('✓ Request sent — the seller will contact you soon!');
-  }, 1200);
+    showToast('Request sent successfully!');
+    setTimeout(() => {
+      window.location.href = 'messages.html?auto=1';
+    }, 1500);
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'Send Request';
+    btn.style.opacity = '1';
+    showToast(err.message || 'Error sending request', 'error');
+  }
 }
 
-function showToast(msg) {
-  var toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(function() { toast.classList.remove('show'); }, 3500);
+async function loadDetails() {
+  if (!currentListingId) {
+    document.querySelector('.detail-layout').innerHTML = '<h3 style="text-align:center;width:100%;">Listing not found</h3>';
+    return;
+  }
+
+  try {
+    const res = await ListingsAPI.getOne(currentListingId);
+    const ad = res.data;
+
+    // Breadcrumb
+    document.getElementById('detailTitleCrumb').textContent = ad.title;
+
+    // Badges & Info
+    document.getElementById('detailTitle').textContent = ad.title;
+    let badgeClass = { donate: 'badge-donate', swap: 'badge-swap', sell: 'badge-sell' }[ad.type] || 'badge-donate';
+    document.getElementById('detailBadges').innerHTML = `
+      <span class="badge ${badgeClass}">${ad.type.toUpperCase()}</span>
+      <span class="badge badge-medical">${ad.domain}</span>
+      <span class="badge badge-condition">${ad.condition.replace('_', ' ')}</span>
+      ${ad.is_urgent ? '<span class="badge badge-urgent">⚡ Urgent</span>' : ''}
+    `;
+
+    // Meta details
+    document.getElementById('detailMeta').innerHTML = `
+      <div class="meta-item"><div class="meta-label">Domain</div><div class="meta-value">${ad.domain}</div></div>
+      <div class="meta-item"><div class="meta-label">Condition</div><div class="meta-value" style="text-transform:capitalize;">${ad.condition.replace('_', ' ')}</div></div>
+      ${ad.price ? '<div class="meta-item"><div class="meta-label">Price</div><div class="meta-value">'+ad.price+'</div></div>' : ''}
+      <div class="meta-item"><div class="meta-label">Posted</div><div class="meta-value">${timeAgo(ad.createdAt)}</div></div>
+    `;
+
+    document.getElementById('detailDesc').textContent = ad.description || 'No description provided.';
+    document.getElementById('detailTime').textContent = timeAgo(ad.createdAt);
+
+    // Images
+    const icon = { medical: "⚕️", engineering: "⚙️", arts: "📖" }[ad.domain] || "📦";
+    if (ad.images && ad.images.length > 0) {
+       changeImg(null, ad.images[0]);
+       let thumbsHtml = '';
+       ad.images.forEach((img, i) => {
+         thumbsHtml += `<div class="img-thumb ${i===0?'active':''}" onclick="changeImg(this, '${img}')"><img src="${img}" style="width:100%;height:100%;object-fit:cover;"></div>`;
+       });
+       document.getElementById('detailThumbs').innerHTML = thumbsHtml;
+    } else {
+       changeImg(null, icon);
+       document.getElementById('detailThumbs').innerHTML = `<div class="img-thumb active" onclick="changeImg(this, '${icon}')">${icon}</div>`;
+    }
+
+    // Seller Info
+    if (ad.user_id) {
+       const user = ad.user_id;
+       const authorInitials = (user.name || "Unknown").substring(0, 2).toUpperCase();
+       document.getElementById('sellerAvatar').textContent = authorInitials;
+       document.getElementById('sellerName').textContent = user.name;
+       document.getElementById('sellerMeta').innerHTML = `${user.college || 'University'} · ${user.year || 'Student'}`;
+       document.getElementById('sellerPoints').innerHTML = `★ ${user.trust_points || 0} Trust points`;
+       if (!user.is_verified) {
+         document.getElementById('sellerVerified').style.display = 'none';
+       }
+    }
+
+    // Methods
+    let methodHtml = '';
+    ['donate', 'swap', 'sell'].forEach(t => {
+      let active = (ad.type === t) ? 'active' : 'disabled';
+      let check = (ad.type === t) ? '<div class="type-radio-dot"></div>' : '';
+      let avail = (ad.type === t) ? '<span class="badge badge-available" style="font-size:11px;margin-right:auto;">Available</span>' : '';
+      let msg = (ad.type === t) ? 'Available for this listing' : 'Not available for this listing';
+      methodHtml += `
+        <button class="type-option ${active}" data-type="${t}" onclick="selectType(this)">
+          <div class="type-radio">${check}</div>
+          <div class="type-option-text">
+            <strong>${t.toUpperCase()}</strong>
+            <small>${msg}</small>
+          </div>
+          ${avail}
+        </button>
+      `;
+    });
+    document.getElementById('detailMethods').innerHTML = methodHtml;
+
+  } catch (err) {
+    showToast('Failed to load listing details', 'error');
+    console.error(err);
+  }
 }
+
+loadDetails();
 </script>
 </body>
 </html>

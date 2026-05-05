@@ -134,6 +134,20 @@
 }
 .toast-needs.show { display: block; }
 .toast-needs.success-toast { background: var(--teal); }
+
+/* ── Skeleton Loaders ── */
+.skeleton-bg {
+  animation: skeleton-pulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes skeleton-pulse {
+  0% { background-color: #f0f2f5; }
+  100% { background-color: #e0e4e8; }
+}
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background-color: #f0f2f5;
+}
 </style>
 </head>
 <body>
@@ -292,7 +306,7 @@ const domainBadge = { medical: 'badge-medical', engineering: 'badge-eng', arts: 
 function getFiltered() {
   const q = document.getElementById('needsSearch').value.trim().toLowerCase();
   return allNeeds.filter(n => {
-    const dOk = currentFilter === 'all' || (currentFilter === 'urgent' ? n.urgent : n.domain === currentFilter);
+    const dOk = currentFilter === 'all' || (currentFilter === 'urgent' ? n.is_urgent : n.domain === currentFilter);
     const sOk = !q || n.title.toLowerCase().includes(q);
     return dOk && sOk;
   });
@@ -306,7 +320,7 @@ function renderGrid() {
   document.getElementById('shownCount').textContent = paginated.length;
   document.getElementById('totalCount').textContent = filtered.length;
   document.getElementById('totalBadge').textContent = allNeeds.length + ' needs';
-  document.getElementById('urgentBadge').textContent = allNeeds.filter(n => n.urgent).length + ' urgent';
+  document.getElementById('urgentBadge').textContent = allNeeds.filter(n => n.is_urgent).length + ' urgent';
 
   grid.innerHTML = '';
   if (!paginated.length) {
@@ -315,26 +329,55 @@ function renderGrid() {
   }
 
   paginated.forEach(n => {
-    const initials = (n.user || 'S').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const initials = (n.user_id?.name || 'S').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
     grid.innerHTML += `
-      <div class="need-card${n.urgent ? ' is-urgent' : ''}">
+      <div class="need-card${n.is_urgent ? ' is-urgent' : ''}">
         <div class="need-card-top">
           <div class="need-card-badges">
             <span class="badge ${domainBadge[n.domain] || ''}">${domainMap[n.domain] || n.domain}</span>
-            ${n.urgent ? '<span class="badge badge-urgent">Urgent</span>' : ''}
+            ${n.is_urgent ? '<span class="badge badge-urgent">Urgent</span>' : ''}
           </div>
-          <span class="need-time">${timeAgo(n.date)}</span>
+          <span class="need-time">${timeAgo(n.createdAt)}</span>
         </div>
         <div class="need-card-title">${esc(n.title)}</div>
-        ${n.desc ? `<div class="need-card-desc">${esc(n.desc)}</div>` : ''}
+        ${n.description ? `<div class="need-card-desc">${esc(n.description)}</div>` : ''}
         <div class="need-card-user">
           <div class="avatar">${initials}</div>
-          <span class="need-card-user-name">${esc(n.user)}</span>
+          <span class="need-card-user-name">${esc(n.user_id?.name || 'Student')}</span>
         </div>
-        <button class="need-contact-btn" onclick="contactNeed('${esc(n.user)}')">I have this — Contact</button>
+        <button class="need-contact-btn" onclick="contactNeed('${esc(n.user_id?.name || '')}')">I have this — Contact</button>
       </div>`;
   });
   renderPagination(filtered.length);
+}
+
+async function loadNeeds() {
+  const grid = document.getElementById('needsGrid');
+  grid.innerHTML = `
+    <div class="need-card">
+      <div class="need-card-top">
+        <div class="need-card-badges">
+          <div class="skeleton-line skeleton-bg" style="width:60px; height:22px; border-radius:12px;"></div>
+        </div>
+        <div class="skeleton-line skeleton-bg" style="width:40px;"></div>
+      </div>
+      <div class="skeleton-line skeleton-bg" style="width:80%; margin-top:8px;"></div>
+      <div class="skeleton-line skeleton-bg" style="width:50%; margin-top:6px;"></div>
+      <div class="need-card-user">
+        <div class="avatar skeleton-bg" style="background-color:#f0f2f5;color:transparent;border:none;"></div>
+        <div class="skeleton-line skeleton-bg" style="flex:1;"></div>
+      </div>
+      <div class="skeleton-line skeleton-bg" style="width:100%; height:36px; border-radius:8px; margin-top:4px;"></div>
+    </div>
+  `.repeat(3);
+
+  try {
+    const res = await NeedsAPI.getAll();
+    allNeeds = res?.data || [];
+    renderGrid();
+  } catch(e) {
+    grid.innerHTML = '<div class="needs-empty"><h3>Error loading needs</h3></div>';
+  }
 }
 
 function renderPagination(total) {
@@ -367,45 +410,77 @@ document.getElementById('postModal').addEventListener('click', e => {
   if (e.target === document.getElementById('postModal')) closePostModal();
 });
 
-function quickPost() {
+async function quickPost() {
+  if (!Auth.isLoggedIn()) { showToast('Please login first', false); return; }
   const title = document.getElementById('quickNeed').value.trim();
   const domain = document.getElementById('quickDomain').value;
   if (!title || !domain) { showToast('Enter what you need and select a domain'); return; }
-  addNeed({ title, domain, urgent: false, user: 'You', date: new Date().toISOString(), desc: '' });
-  document.getElementById('quickNeed').value = '';
-  document.getElementById('quickDomain').value = '';
+
+  const btn = document.querySelector('.post-need-bar .btn-white');
+  btn.disabled = true;
+  try {
+    const res = await NeedsAPI.create(title, domain, false, '');
+    document.getElementById('quickNeed').value = '';
+    document.getElementById('quickDomain').value = '';
+    showToast('Need posted successfully!', true);
+    
+    // Smart match notification
+    if (res?.data?.matchedUsers?.length) {
+      document.getElementById('matchBannerWrap').innerHTML = `
+        <div class="match-banner">
+          <div style="flex:1;">
+            <strong>Smart Match Found</strong>
+            <span>There are ${res.data.matchedUsers.length} students who might have what you need!</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="this.parentElement.parentElement.innerHTML=''">Dismiss</button>
+        </div>`;
+    }
+    
+    loadNeeds();
+  } catch(e) {
+    showToast(e.message || 'Failed to post', false);
+  } finally {
+    btn.disabled = false;
+  }
 }
 
-function submitNeed() {
+async function submitNeed() {
+  if (!Auth.isLoggedIn()) { showToast('Please login first', false); return; }
   const title = document.getElementById('modalTitle').value.trim();
   const domain = document.getElementById('modalDomain').value;
   const urgent = document.getElementById('modalUrgency').value === 'urgent';
   const desc = document.getElementById('modalDesc').value.trim();
   if (!title) { showToast('Please enter what you need'); return; }
   if (!domain) { showToast('Please select a domain'); return; }
-  addNeed({ title, domain, urgent, user: 'You', date: new Date().toISOString(), desc });
-  closePostModal();
-  document.getElementById('modalTitle').value = '';
-  document.getElementById('modalDesc').value = '';
-}
 
-function addNeed(need) {
-  allNeeds.unshift(need);
-  currentFilter = 'all'; currentPage = 1;
-  document.querySelectorAll('.domain-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('.domain-tab[data-filter="all"]').classList.add('active');
-  renderGrid();
-  showToast('Need posted!', true);
-  const match = allNeeds.find(n => n !== need && n.domain === need.domain);
-  if (match) {
-    document.getElementById('matchBannerWrap').innerHTML = `
-      <div class="match-banner">
-        <div style="flex:1;">
-          <strong>Smart Match Found</strong>
-          <span>${esc(match.user)} posted a similar need in ${domainMap[match.domain] || match.domain} — you may connect.</span>
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="this.parentElement.parentElement.innerHTML=''">Dismiss</button>
-      </div>`;
+  const btn = document.querySelector('.modal-box .btn-primary');
+  btn.disabled = true;
+  btn.textContent = 'Posting...';
+  try {
+    const res = await NeedsAPI.create(title, domain, urgent, desc);
+    closePostModal();
+    document.getElementById('modalTitle').value = '';
+    document.getElementById('modalDesc').value = '';
+    showToast('Need posted successfully!', true);
+
+    // Smart match notification
+    if (res?.data?.matchedUsers?.length) {
+      document.getElementById('matchBannerWrap').innerHTML = `
+        <div class="match-banner">
+          <div style="flex:1;">
+            <strong>Smart Match Found</strong>
+            <span>There are ${res.data.matchedUsers.length} students who might have what you need!</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="this.parentElement.parentElement.innerHTML=''">Dismiss</button>
+        </div>`;
+    }
+
+    loadNeeds();
+  } catch(e) {
+    showToast(e.message || 'Failed to post', false);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Post My Need';
   }
 }
 
@@ -421,7 +496,7 @@ function showToast(msg, success) {
   setTimeout(() => t.className = 'toast-needs', 3000);
 }
 
-renderGrid();
+loadNeeds();
 </script>
 </body>
 </html>

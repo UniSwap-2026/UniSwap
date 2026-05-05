@@ -142,7 +142,7 @@ const NeedsAPI = {
   },
 
   /* نشر احتياج */
-  create: (title, domain, is_urgent = false) => POST('/needs', { title, domain, is_urgent }),
+  create: (title, domain, is_urgent = false, description = null) => POST('/needs', { title, domain, is_urgent, description }),
 };
 
 /* ══════════════════════════════════════════════════════
@@ -215,14 +215,14 @@ function requireAuth() {
 }
 
 /* تحديث الناف بار بعد تسجيل الدخول */
-function updateNavbar() {
+async function updateNavbar() {
   const user = Auth.getUser();
   if (!user) return;
 
   /* إخفاء أزرار Login/SignUp وإظهار اسم المستخدم */
   document.querySelectorAll('.nav-actions').forEach(el => {
     el.innerHTML = `
-      <a href="dashboard.html" class="btn btn-ghost btn-sm">${user.name}</a>
+      <a href="dashboard.html" class="btn btn-ghost btn-sm" style="margin-right:8px;">${user.name}</a>
       <button onclick="Auth.logout()" class="btn btn-outline btn-sm">Logout</button>
     `;
   });

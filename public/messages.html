@@ -1,275 +1,567 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UniSwap — Messages</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<script src="api.js"></script>
-</head>
-<body>
-
-<nav class="navbar">
-  <div class="container">
-    <div class="navbar-inner">
-      <a href="index.html" class="logo">Uni<span>Swap</span></a>
-      <ul class="nav-links">
-        <li><a href="listings.html">Announcements</a></li>                
-        <li><a href="research-hub.html">Research Hub</a></li>
-        <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
-      </ul>
-       <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
-
-    </div>
-  </div>
-</nav>
-
-<div class="messages-page">
-
-  <!-- Sidebar -->
-  <div class="msg-sidebar">
-    <div class="msg-sidebar-head">
-      <h2>Messages</h2>
-      <input type="text" class="msg-search" id="msgSearch" placeholder="🔍 Search messages..." oninput="filterConvs()">
-    </div>
-    <div class="msg-list" id="convList">
-      <div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
-    </div>
-  </div>
-
-  <!-- Main chat -->
-  <div class="msg-main" id="msgMain">
-    <!-- Empty state -->
-    <div id="emptyState" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:12px;">
-      <div style="font-size:48px;">💬</div>
-      <p style="font-size:14px;">Select a conversation to start chatting</p>
-    </div>
-
-    <!-- Chat area (hidden initially) -->
-    <div id="chatArea" style="display:none;flex-direction:column;height:100%;">
-      <div class="msg-main-head">
-        <div class="avatar" style="width:40px;height:40px;font-size:13px;" id="chatAvatar">—</div>
-        <div>
-          <div class="msg-main-head-name" id="chatName">—</div>
-          <div class="msg-main-head-sub" id="chatSub">—</div>
-        </div>
-        <div style="margin-right:auto;display:flex;gap:8px;align-items:center;">
-          <span class="badge badge-swap" id="chatStatus" style="font-size:11px;">Active</span>
-          <button class="btn btn-primary btn-sm" onclick="confirmReceipt()">Confirm receipt ✓</button>
-        </div>
-      </div>
-
-      <div class="msg-body" id="msgBody"></div>
-
-      <!-- Exchange code -->
-      <div class="code-section">
-        <div class="code-section-title">Exchange confirmation code</div>
-        <div class="code-grid">
-          <div class="code-box">
-            <div class="code-box-label">Your code — give this to the other party</div>
-            <div class="code-display" id="myCode">—</div>
-            <div class="code-expiry">Valid for 24 hours</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniSwap — Messages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="api.js"></script>
+    <style>
+      /* Premium Messages Overrides */
+      body {
+        overflow: hidden; /* Ensure absolute no scroll on the body */
+      }
+      .messages-page {
+        height: calc(100vh - 65px); /* 64px navbar + 1px border */
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        background: var(--bg);
+      }
+      .msg-sidebar {
+        background: var(--white);
+        border-right: 1px solid var(--border);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+        z-index: 10;
+      }
+      .msg-sidebar-head {
+        padding: 20px;
+        background: var(--white);
+      }
+      .msg-search {
+        border-radius: 20px;
+        background: #f0f2f5;
+        border: none;
+        padding-left: 20px;
+      }
+      .msg-search:focus {
+        background: #fff;
+        box-shadow: 0 0 0 2px var(--blue-lt);
+      }
+      .msg-item {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f0f2f5;
+        border-radius: 12px;
+        margin: 4px 10px;
+        border: none;
+      }
+      .msg-item.active {
+        background: var(--blue-lt);
+        box-shadow: inset 4px 0 0 var(--blue);
+      }
+      .msg-item:hover:not(.active) {
+        background: #f9fafb;
+      }
+      .msg-main {
+        position: relative;
+        background: #efeae2; /* subtle chat bg */
+        background-image: url('data:image/svg+xml,%3Csvg width="20" height="20" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0h20v20H0z" fill="%23efeae2"/%3E%3Ccircle cx="10" cy="10" r="1" fill="%23dcd4c6"/%3E%3C/svg%3E');
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        height: 100%;
+      }
+      .msg-main-head {
+        background: var(--white);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 16px 24px;
+        z-index: 10;
+      }
+      .msg-body {
+        padding: 24px;
+        gap: 16px;
+        scroll-behavior: smooth;
+      }
+      .msg-bubble-wrap {
+        margin-bottom: 8px;
+        animation: fadeUp 0.3s cubic-bezier(0.1, 0.8, 0.2, 1);
+      }
+      .msg-bubble {
+        padding: 12px 16px;
+        border-radius: 18px;
+        font-size: 14.5px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      .msg-bubble.sent {
+        background: var(--teal);
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+      .msg-bubble.recv {
+        background: var(--white);
+        border: none;
+        border-bottom-left-radius: 4px;
+      }
+      .msg-footer {
+        padding: 16px 24px;
+        background: var(--white);
+        gap: 12px;
+      }
+      .msg-footer input {
+        border-radius: 24px;
+        background: #f0f2f5;
+        border: none;
+        padding: 0 20px;
+      }
+      .msg-footer input:focus {
+        background: #fff;
+        box-shadow: 0 0 0 2px var(--blue-lt);
+      }
+      .msg-footer .btn {
+        border-radius: 24px;
+        padding: 10px 24px;
+      }
+      .code-section {
+        margin: 16px 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border: none;
+      }
+      .code-grid {
+        gap: 20px;
+      }
+      .code-box {
+        border-radius: 12px;
+        background: #fafafb;
+        border: 1px solid var(--border);
+      }
+      .code-input {
+        border-radius: 12px;
+        background: #fafafb;
+      }
+      .msg-unread-badge {
+        background: var(--green); /* WhatsApp style green */
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      /* Skeleton Loading */
+      .skeleton-bg {
+        animation: skeleton-pulse 1.2s ease-in-out infinite alternate;
+      }
+      @keyframes skeleton-pulse {
+        0% {
+          background-color: #f0f2f5;
+        }
+        100% {
+          background-color: #e0e4e8;
+        }
+      }
+      .skeleton-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 20px;
+        margin: 4px 10px;
+        border-radius: 12px;
+      }
+      .skeleton-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .skeleton-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .skeleton-line {
+        height: 12px;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container">
+        <div class="navbar-inner">
+          <a href="index.html" class="logo">Uni<span>Swap</span></a>
+          <ul class="nav-links">
+            <li><a href="listings.html">Announcements</a></li>
+            <li><a href="research-hub.html">Research Hub</a></li>
+            <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
+          </ul>
+          <div class="nav-actions">
+            <div
+              class="avatar"
+              id="navAvatar"
+              style="
+                width: 36px;
+                height: 36px;
+                font-size: 12px;
+                cursor: pointer;
+              "
+              onclick="window.location = 'dashboard.html'"
+            >
+              —
+            </div>
           </div>
-          <div>
-            <div class="code-box-label" style="font-size:12px;color:var(--text2);margin-bottom:8px;">Enter the other party's code</div>
-            <input type="text" class="code-input" id="codeInput" placeholder="_ _ _ - _ _ _" maxlength="7">
-            <button class="btn btn-primary btn-full btn-sm" onclick="confirmCode()">Confirm exchange ✓</button>
-            <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px;">After exchanging both codes, the transaction completes automatically</div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="messages-page">
+      <!-- Sidebar -->
+      <div class="msg-sidebar">
+        <div class="msg-sidebar-head">
+          <h2>Messages</h2>
+          <input
+            type="text"
+            class="msg-search"
+            id="msgSearch"
+            placeholder="🔍 Search messages..."
+            oninput="filterConvs()"
+          />
+        </div>
+        <div class="msg-list" id="convList">
+          <!-- Skeleton Loaders -->
+          <div class="skeleton-item">
+            <div class="skeleton-avatar skeleton-bg"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line skeleton-bg" style="width: 50%"></div>
+              <div class="skeleton-line skeleton-bg" style="width: 80%"></div>
+            </div>
+          </div>
+          <div class="skeleton-item">
+            <div class="skeleton-avatar skeleton-bg"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line skeleton-bg" style="width: 40%"></div>
+              <div class="skeleton-line skeleton-bg" style="width: 90%"></div>
+            </div>
+          </div>
+          <div class="skeleton-item">
+            <div class="skeleton-avatar skeleton-bg"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line skeleton-bg" style="width: 60%"></div>
+              <div class="skeleton-line skeleton-bg" style="width: 70%"></div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="msg-footer">
-        <input type="text" id="msgInput" placeholder="Type your message..." onkeydown="if(event.key==='Enter')sendMsg()">
-        <button class="btn btn-primary btn-sm" onclick="sendMsg()">Send</button>
+      <!-- Main chat -->
+      <div class="msg-main" id="msgMain">
+        <!-- Empty state -->
+        <div
+          id="emptyState"
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text3);
+            gap: 12px;
+          "
+        >
+          <div style="font-size: 48px">💬</div>
+          <p style="font-size: 14px">Select a conversation to start chatting</p>
+        </div>
+
+        <!-- Chat area (hidden initially) -->
+        <div
+          id="chatArea"
+          style="display: none; flex-direction: column; height: 100%; overflow: hidden;"
+        >
+          <div class="msg-main-head">
+            <div
+              class="avatar"
+              style="width: 40px; height: 40px; font-size: 13px"
+              id="chatAvatar"
+            >
+              —
+            </div>
+            <div>
+              <div class="msg-main-head-name" id="chatName">—</div>
+              <div class="msg-main-head-sub" id="chatSub">—</div>
+            </div>
+            <div
+              style="
+                margin-right: auto;
+                display: flex;
+                gap: 8px;
+                align-items: center;
+              "
+            >
+              <span
+                class="badge badge-swap"
+                id="chatStatus"
+                style="font-size: 11px"
+                >Active</span
+              >
+            </div>
+          </div>
+
+          <div class="msg-body" id="msgBody"></div>
+
+          <div class="msg-footer">
+            <input
+              type="text"
+              id="msgInput"
+              placeholder="Type your message..."
+              onkeydown="if (event.key === 'Enter') sendMsg();"
+            />
+            <button class="btn btn-primary btn-sm" onclick="sendMsg()">
+              Send
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="toast" id="toast"></div>
+    <div class="toast" id="toast"></div>
 
-<script>
-requireAuth();
+    <script>
+      requireAuth();
+      updateNavbar();
 
-/* ── Mobile nav (only if elements exist) ── */
-const _hamburger = document.getElementById('hamburger');
-if (_hamburger) {
-  _hamburger.addEventListener('click', function() {
-    const nav = document.getElementById('mobileNav');
-    if (nav) nav.classList.toggle('open');
-  });
-}
+      /* ── Mobile nav (only if elements exist) ── */
+      const _hamburger = document.getElementById("hamburger");
+      if (_hamburger) {
+        _hamburger.addEventListener("click", function () {
+          const nav = document.getElementById("mobileNav");
+          if (nav) nav.classList.toggle("open");
+        });
+      }
 
-/* ── Helper: human-readable time ── */
-function timeAgo(dateStr) {
-  if (!dateStr) return '';
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1)  return 'Just now';
-  if (m < 60) return m + 'm ago';
-  const h = Math.floor(m / 60);
-  if (h < 24) return h + 'h ago';
-  const dy = Math.floor(h / 24);
-  if (dy < 7) return dy + 'd ago';
-  return new Date(dateStr).toLocaleDateString('en-US', { month:'short', day:'numeric' });
-}
+      /* ── Helper: human-readable time ── */
+      function timeAgo(dateStr) {
+        if (!dateStr) return "";
+        const diff = Date.now() - new Date(dateStr).getTime();
+        const m = Math.floor(diff / 60000);
+        if (m < 1) return "Just now";
+        if (m < 60) return m + "m ago";
+        const h = Math.floor(m / 60);
+        if (h < 24) return h + "h ago";
+        const dy = Math.floor(h / 24);
+        if (dy < 7) return dy + "d ago";
+        return new Date(dateStr).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      }
 
-/* ── Helper: toast notification ── */
-function showToast(msg, type) {
-  const toast = document.getElementById('toast');
-  if (!toast) return;
-  toast.textContent = msg;
-  toast.className = 'toast' + (type === 'error' ? ' toast-error' : ' toast-success');
-  toast.style.display = 'block';
-  setTimeout(() => { toast.style.display = 'none'; }, 3000);
-}
+      /* ── Helper: toast notification ── */
+      function showToast(msg, type) {
+        const toast = document.getElementById("toast");
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.className =
+          "toast" + (type === "error" ? " toast-error" : " toast-success");
+        toast.style.display = "block";
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
 
-/* Set avatar */
-const user = Auth.getUser();
-if (user) {
-  const initials = user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('navAvatar').textContent = initials;
-}
+      /* Set avatar */
+      const userObj = Auth.getUser();
+      if (userObj) {
+        const initials = userObj.name
+          .split(" ")
+          .map((w) => w[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
+        const avatarEl = document.getElementById("navAvatar");
+        if (avatarEl) avatarEl.textContent = initials;
+      }
 
-var activeRequestId = null;
-var allConvs        = [];
+      var activeRequestId = null;
+      var allConvs = [];
 
-async function loadConversations() {
-  const list = document.getElementById('convList');
-  try {
-    const res  = await MessagesAPI.getAll();
-    allConvs   = res?.data || [];
+      async function loadConversations() {
+        const list = document.getElementById("convList");
+        try {
+          const res = await MessagesAPI.getAll();
+          allConvs = res?.data || [];
 
-    if (!allConvs.length) {
-      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">No conversations yet.<br><a href="listings.html">Browse listings</a> to connect.</div>';
-      return;
-    }
+          if (!allConvs.length) {
+            list.innerHTML =
+              '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">No conversations yet.<br><a href="listings.html">Browse listings</a> to connect.</div>';
+            return;
+          }
 
-    renderConvList(allConvs);
+          const urlParams = new URLSearchParams(window.location.search);
+          const autoOpen = urlParams.get('auto') === '1';
 
-    /* auto-open first */
-    if (allConvs[0]) openChat(allConvs[0].request_id, allConvs[0].other_user, allConvs[0].listing_title, allConvs[0].my_code);
+          renderConvList(allConvs, autoOpen);
 
-  } catch(err) {
-    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">Could not load conversations</div>';
-  }
-}
+          /* auto-open first only if autoOpen is true */
+          if (allConvs[0] && autoOpen) {
+            const firstItem = list.querySelector('.msg-item');
+            if (firstItem) firstItem.classList.add('active');
+            openChat(
+              allConvs[0].request_id,
+              allConvs[0].other_user,
+              allConvs[0].listing_title,
+              allConvs[0].my_code,
+            );
+          }
+        } catch (err) {
+          list.innerHTML =
+            '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">Could not load conversations</div>';
+        }
+      }
 
-function renderConvList(convs) {
-  const list = document.getElementById('convList');
-  list.innerHTML = '';
-  convs.forEach((conv, i) => {
-    const other    = conv.other_user || {};
-    const initials = (other.name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    const unread   = conv.unread_count > 0;
-    const item     = document.createElement('div');
-    item.className = 'msg-item' + (i === 0 ? ' active' : '');
-    item.dataset.requestId = conv.request_id;
-    item.dataset.name = (other.name||'').toLowerCase();
-    item.innerHTML = `
+      function renderConvList(convs, autoOpen) {
+        const list = document.getElementById("convList");
+        list.innerHTML = "";
+        convs.forEach((conv, i) => {
+          const other = conv.other_user || {};
+          const initials = (other.name || "U")
+            .split(" ")
+            .map((w) => w[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2);
+          const unread = conv.unread_count > 0;
+          const item = document.createElement("div");
+          item.className = "msg-item"; // active class is added externally if auto-opened
+          item.dataset.requestId = conv.request_id;
+          item.dataset.name = (other.name || "").toLowerCase();
+          item.innerHTML = `
       <div class="avatar" style="width:40px;height:40px;font-size:13px;">${initials}</div>
       <div class="msg-item-body">
         <div class="msg-item-top">
-          <span class="msg-item-name">${other.name||'Student'}</span>
+          <span class="msg-item-name">${other.name || "Student"}</span>
           <span class="msg-item-time">${timeAgo(conv.updatedAt)}</span>
         </div>
-        <div class="msg-item-preview">${conv.last_message||'...'}</div>
+        <div class="msg-item-preview">${conv.last_message || "..."}</div>
       </div>
-      ${unread ? '<div class="msg-unread-dot"></div>' : ''}
+      ${conv.unread_count > 0 && !(autoOpen && i === 0) ? `<div class="msg-unread-badge">${conv.unread_count}</div>` : ""}
     `;
-    item.addEventListener('click', () => {
-      document.querySelectorAll('.msg-item').forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-      const dot = item.querySelector('.msg-unread-dot');
-      if (dot) dot.remove();
-      openChat(conv.request_id, other, conv.listing_title, conv.my_code);
-    });
-    list.appendChild(item);
-  });
-}
+          item.addEventListener("click", () => {
+            document
+              .querySelectorAll(".msg-item")
+              .forEach((i) => i.classList.remove("active"));
+            item.classList.add("active");
+            const badge = item.querySelector(".msg-unread-badge");
+            if (badge) badge.remove();
+            openChat(conv.request_id, other, conv.listing_title, conv.my_code);
+          });
+          list.appendChild(item);
+        });
+      }
 
-function filterConvs() {
-  const val = document.getElementById('msgSearch').value.trim().toLowerCase();
-  document.querySelectorAll('.msg-item').forEach(item => {
-    const name = item.dataset.name || '';
-    item.style.display = (!val || name.includes(val)) ? '' : 'none';
-  });
-}
+      function filterConvs() {
+        const val = document
+          .getElementById("msgSearch")
+          .value.trim()
+          .toLowerCase();
+        document.querySelectorAll(".msg-item").forEach((item) => {
+          const name = item.dataset.name || "";
+          item.style.display = !val || name.includes(val) ? "" : "none";
+        });
+      }
 
-async function openChat(requestId, otherUser, listingTitle, myCode) {
-  activeRequestId = requestId;
-  const initials = (otherUser?.name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('chatAvatar').textContent = initials;
-  document.getElementById('chatName').textContent   = otherUser?.name || 'Student';
-  document.getElementById('chatSub').textContent    = `Regarding: ${listingTitle || 'listing'}`;
-  document.getElementById('myCode').textContent     = myCode || '—';
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('chatArea').style.display    = 'flex';
+      async function openChat(requestId, otherUser, listingTitle, myCode) {
+        activeRequestId = requestId;
+        const initials = (otherUser?.name || "U")
+          .split(" ")
+          .map((w) => w[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
+        document.getElementById("chatAvatar").textContent = initials;
+        document.getElementById("chatName").textContent =
+          otherUser?.name || "Student";
+        document.getElementById("chatSub").textContent =
+          `Regarding: ${listingTitle || "listing"}`;
+        document.getElementById("emptyState").style.display = "none";
+        document.getElementById("chatArea").style.display = "flex";
 
-  try {
-    const res  = await MessagesAPI.getByRequest(requestId);
-    const msgs = res?.data || [];
-    const body = document.getElementById('msgBody');
-    const myId = Auth.getUser()?._id;
+        try {
+          const res = await MessagesAPI.getByRequest(requestId);
+          const msgs = res?.data || [];
+          const body = document.getElementById("msgBody");
+          const userObj = Auth.getUser() || {};
+          const myId = userObj._id || userObj.id;
 
-    body.innerHTML = '';
-    if (!msgs.length) {
-      body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">No messages yet — say hi!</div>';
-    } else {
-      msgs.forEach(m => {
-        const isMine = m.sender_id === myId || m.sender_id?._id === myId;
-        body.insertAdjacentHTML('beforeend', `
-          <div class="msg-bubble-wrap ${isMine?'sent':'recv'}">
-            <div class="msg-bubble ${isMine?'sent':'recv'}">${m.body}</div>
+          body.innerHTML = "";
+          if (!msgs.length) {
+            body.innerHTML =
+              '<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">No messages yet — say hi!</div>';
+          } else {
+            msgs.forEach((m) => {
+              const senderId =
+                typeof m.sender_id === "object" && m.sender_id !== null
+                  ? m.sender_id._id
+                  : m.sender_id;
+              const isMine = String(senderId) === String(myId);
+              body.insertAdjacentHTML(
+                "beforeend",
+                `
+          <div class="msg-bubble-wrap ${isMine ? "sent" : "recv"}">
+            <div class="msg-bubble ${isMine ? "sent" : "recv"}">${m.body}</div>
           </div>
-        `);
-      });
-    }
-    body.scrollTop = body.scrollHeight;
-  } catch(err) {
-    console.warn('Could not load messages:', err.message);
-  }
-}
+        `,
+              );
+            });
+          }
+          body.scrollTop = body.scrollHeight;
+        } catch (err) {
+          console.warn("Could not load messages:", err.message);
+        }
+      }
 
-async function sendMsg() {
-  const input = document.getElementById('msgInput');
-  const text  = input.value.trim();
-  if (!text || !activeRequestId) return;
-  try {
-    await MessagesAPI.send(activeRequestId, text);
-    const body = document.getElementById('msgBody');
-    body.querySelector('[style*="No messages"]')?.remove();
-    body.insertAdjacentHTML('beforeend', `
+      async function sendMsg() {
+        const input = document.getElementById("msgInput");
+        const text = input.value.trim();
+        if (!text || !activeRequestId) return;
+        try {
+          await MessagesAPI.send(activeRequestId, text);
+          const body = document.getElementById("msgBody");
+          body.querySelector('[style*="No messages"]')?.remove();
+          body.insertAdjacentHTML(
+            "beforeend",
+            `
       <div class="msg-bubble-wrap sent"><div class="msg-bubble sent">${text}</div></div>
-    `);
-    input.value = '';
-    body.scrollTop = body.scrollHeight;
-  } catch(err) {
-    showToast(err.message || 'Failed to send message', 'error');
-  }
-}
+    `,
+          );
+          input.value = "";
+          body.scrollTop = body.scrollHeight;
+        } catch (err) {
+          showToast(err.message || "Failed to send message", "error");
+        }
+      }
 
-async function confirmCode() {
-  const code = document.getElementById('codeInput').value.trim();
-  if (!code)            { showToast('Please enter the other party\'s code', 'error'); return; }
-  if (!activeRequestId) return;
-  try {
-    await RequestsAPI.confirm(activeRequestId, code);
-    showToast('✓ Exchange confirmed! Transaction completed.');
-    document.getElementById('chatStatus').textContent = 'Completed ✓';
-  } catch(err) {
-    showToast(err.message || 'Invalid code — try again', 'error');
-  }
-}
+      async function confirmCode() {
+        const code = document.getElementById("codeInput").value.trim();
+        if (!code) {
+          showToast("Please enter the other party's code", "error");
+          return;
+        }
+        if (!activeRequestId) return;
+        try {
+          await RequestsAPI.confirm(activeRequestId, code);
+          showToast("✓ Exchange confirmed! Transaction completed.");
+          document.getElementById("chatStatus").textContent = "Completed ✓";
+        } catch (err) {
+          showToast(err.message || "Invalid code — try again", "error");
+        }
+      }
 
-function confirmReceipt() {
-  showToast('✓ Receipt confirmed — rate your experience from your profile');
-}
+      function confirmReceipt() {
+        showToast(
+          "✓ Receipt confirmed — rate your experience from your profile",
+        );
+      }
 
-loadConversations();
-</script>
-</body>
+      loadConversations();
+    </script>
+  </body>
 </html>

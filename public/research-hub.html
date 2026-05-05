@@ -175,6 +175,20 @@
 }
 .hub-toast.show { display: block; }
 .hub-toast.success-t { background: var(--teal); }
+
+/* ── Skeleton Loaders ── */
+.skeleton-bg {
+  animation: skeleton-pulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes skeleton-pulse {
+  0% { background-color: #f0f2f5; }
+  100% { background-color: #e0e4e8; }
+}
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background-color: #f0f2f5;
+}
 </style>
 </head>
 <body>
@@ -286,7 +300,8 @@
       <label class="form-label">Description</label>
       <textarea class="form-textarea" id="uploadDesc" placeholder="Brief description..."></textarea>
     </div>
-    <div class="upload-zone" id="uploadZone" onclick="fakeUpload()">
+    <input type="file" id="pdfUpload" accept="application/pdf" style="display:none;" onchange="handleFile(event)">
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('pdfUpload').click()">
       <div class="upload-zone-title">Attach File</div>
       <div class="upload-zone-sub">Click to upload PDF — max 20MB</div>
     </div>
@@ -323,6 +338,7 @@ if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
 }
 
 let content = [];
+let uploadedBase64 = null;
 let currentDomain = 'all';
 let currentType = 'all';
 let selectedUploadType = 'summary';
@@ -389,8 +405,8 @@ function renderGrid() {
         <div class="hub-card-top-row">
           <div class="hub-card-icon-box ${c.type}">${shortLabel}</div>
           <div>
-            <div class="hub-card-title-text">${esc(c.title)}</div>
-            <div class="hub-card-sub-text">${esc(c.sub)}</div>
+            <div class="hub-card-title-text" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${esc(c.title)}</div>
+            <div class="hub-card-sub-text">${esc(c.user_id?.name || 'Student')}</div>
           </div>
         </div>
         <div class="hub-card-tags-row">
@@ -398,18 +414,57 @@ function renderGrid() {
           <span class="badge ${domainBadge[c.domain]||''}">${domainLabels[c.domain]||c.domain}</span>
           <span class="badge badge-condition">${esc(c.year)}</span>
         </div>
-        ${c.desc ? `<div class="hub-card-desc-text">${esc(c.desc)}</div>` : ''}
+        <div class="hub-card-desc-text" style="flex:1;">${esc(c.description || 'No description provided.')}</div>
         <div class="hub-card-footer-row">
           <div class="hub-card-user-row">
             <div class="avatar">${initials}</div>
-            <span class="hub-card-user-name">${esc(c.user)}</span>
+            <span class="hub-card-user-name">${esc(c.user_id?.name || 'Student')}</span>
           </div>
           <span class="hub-card-dl-count">${c.downloads} downloads</span>
-          <button class="hub-dl-btn ${c.type}" onclick="dlItem('${c.id}')">Download</button>
+          <button class="hub-dl-btn ${c.type}" onclick="dlItem('${c._id}')">Download</button>
         </div>
       </div>`;
   });
   renderPagination(filtered.length);
+}
+
+async function loadContent() {
+  const grid = document.getElementById('hubGrid');
+  grid.innerHTML = `
+    <div class="hub-card-main">
+      <div class="hub-card-top-row">
+        <div class="hub-card-icon-box skeleton-bg" style="background-color:#f0f2f5;color:transparent;"></div>
+        <div style="flex:1;">
+          <div class="skeleton-line skeleton-bg" style="width:70%; margin-bottom:6px;"></div>
+          <div class="skeleton-line skeleton-bg" style="width:40%;"></div>
+        </div>
+      </div>
+      <div class="hub-card-tags-row">
+        <div class="skeleton-line skeleton-bg" style="width:60px; height:22px; border-radius:12px;"></div>
+        <div class="skeleton-line skeleton-bg" style="width:80px; height:22px; border-radius:12px;"></div>
+      </div>
+      <div style="flex:1; margin-top:10px;">
+        <div class="skeleton-line skeleton-bg" style="width:100%; margin-bottom:6px;"></div>
+        <div class="skeleton-line skeleton-bg" style="width:90%; margin-bottom:6px;"></div>
+      </div>
+      <div class="hub-card-footer-row">
+        <div class="hub-card-user-row">
+          <div class="avatar skeleton-bg" style="background-color:#f0f2f5;color:transparent;"></div>
+          <div class="skeleton-line skeleton-bg" style="width:60px;"></div>
+        </div>
+        <div class="skeleton-line skeleton-bg" style="width:80px; height:26px; border-radius:13px;"></div>
+      </div>
+    </div>
+  `.repeat(3);
+
+  try {
+    const res = await HubAPI.getAll();
+    content = res?.data || [];
+    renderGrid();
+  } catch (err) {
+    showToast('Failed to load content', false);
+    grid.innerHTML = '<div style="padding:20px;text-align:center;grid-column:1/-1;">Could not load items.</div>';
+  }
 }
 
 function renderPagination(total) {
@@ -441,13 +496,36 @@ function setType(btn, type) {
 
 function applyFilters() { currentPage = 1; renderGrid(); }
 
-function dlItem(id) {
-  const item = content.find(c => c.id === id);
-  if (item) { item.downloads++; renderGrid(); showToast('Downloaded: ' + item.title, true); }
+async function dlItem(id) {
+  const item = content.find(c => c._id === id);
+  if (item) {
+    try {
+      await HubAPI.download(id); // Increment download count
+      item.downloads++;
+      renderGrid();
+      // Trigger download
+      const a = document.createElement('a');
+      a.href = item.file_url;
+      a.download = item.title + '.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('Downloading: ' + item.title, true);
+    } catch(e) {
+      showToast('Download failed', false);
+    }
+  }
 }
 
 function openUploadModal() {
+  if (!Auth.isLoggedIn()) {
+    showToast('Please login first');
+    setTimeout(() => window.location.href = 'login.html', 1500);
+    return;
+  }
   fileUploaded = false;
+  uploadedBase64 = null;
+  document.getElementById('pdfUpload').value = '';
   document.getElementById('uploadZone').className = 'upload-zone';
   document.getElementById('uploadZone').innerHTML = '<div class="upload-zone-title">Attach File</div><div class="upload-zone-sub">Click to upload PDF — max 20MB</div>';
   document.getElementById('uploadModal').classList.add('open');
@@ -463,43 +541,71 @@ function selectType(btn, type) {
   btn.classList.add('active');
 }
 
-function fakeUpload() {
-  fileUploaded = true;
-  const z = document.getElementById('uploadZone');
-  z.className = 'upload-zone done';
-  z.innerHTML = '<div class="upload-zone-title">File attached</div><div class="upload-zone-sub">Click to replace</div>';
+function handleFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.type !== 'application/pdf') {
+    showToast('Only PDF files are allowed');
+    return;
+  }
+  if (file.size > 20 * 1024 * 1024) {
+    showToast('File size must be under 20MB');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    uploadedBase64 = e.target.result;
+    fileUploaded = true;
+    const z = document.getElementById('uploadZone');
+    z.className = 'upload-zone done';
+    z.innerHTML = `<div class="upload-zone-title">${file.name}</div><div class="upload-zone-sub">File attached successfully. Click to replace</div>`;
+  };
+  reader.readAsDataURL(file);
 }
 
-function submitUpload() {
+async function submitUpload() {
+  const btn = document.querySelector('.modal-box .btn-primary');
   const title  = document.getElementById('uploadTitle').value.trim();
   const domain = document.getElementById('uploadDomain').value;
   const year   = document.getElementById('uploadYear').value;
-  const prof   = document.getElementById('uploadProf').value.trim();
   const desc   = document.getElementById('uploadDesc').value.trim();
   if (!title)  { showToast('Please enter a title'); return; }
   if (!domain) { showToast('Please select a domain'); return; }
-  if (!fileUploaded) { showToast('Please attach a file'); return; }
+  if (!fileUploaded || !uploadedBase64) { showToast('Please attach a file'); return; }
 
-  content.unshift({
-    id: String(Date.now()), type: selectedUploadType,
-    domain, title, year: year || 'Year 1',
-    sub: prof ? 'By ' + prof : 'Shared via UniSwap',
-    desc: desc || '', downloads: 0, user: 'You',
-  });
+  btn.disabled = true;
+  btn.textContent = 'Uploading...';
 
-  closeUploadModal();
-  document.getElementById('uploadTitle').value = '';
-  document.getElementById('uploadDomain').value = '';
-  document.getElementById('uploadProf').value = '';
-  document.getElementById('uploadDesc').value = '';
-  fileUploaded = false;
-  currentDomain = 'all'; currentType = 'all'; currentPage = 1;
-  document.querySelectorAll('.domain-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('.domain-tab[data-domain="all"]').classList.add('active');
-  document.querySelectorAll('.hub-type-btn').forEach(t => t.classList.remove('active'));
-  document.querySelector('.hub-type-btn[data-type="all"]').classList.add('active');
-  renderGrid();
-  showToast('Content shared!', true);
+  try {
+    await HubAPI.create({
+      title,
+      type: selectedUploadType,
+      domain,
+      year: year || 'Year 1',
+      description: desc,
+      file_url: uploadedBase64
+    });
+
+    closeUploadModal();
+    document.getElementById('uploadTitle').value = '';
+    document.getElementById('uploadDomain').value = '';
+    document.getElementById('uploadProf').value = '';
+    document.getElementById('uploadDesc').value = '';
+    fileUploaded = false;
+    uploadedBase64 = null;
+    currentDomain = 'all'; currentType = 'all'; currentPage = 1;
+    document.querySelectorAll('.domain-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.domain-tab[data-domain="all"]').classList.add('active');
+    document.querySelectorAll('.hub-type-btn').forEach(t => t.classList.remove('active'));
+    document.querySelector('.hub-type-btn[data-type="all"]').classList.add('active');
+    showToast('Content shared successfully!', true);
+    loadContent(); // Reload the grid
+  } catch (err) {
+    showToast(err.message || 'Failed to upload', false);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Share Content';
+  }
 }
 
 function showToast(msg, success) {
@@ -509,7 +615,7 @@ function showToast(msg, success) {
   setTimeout(() => t.className = 'hub-toast', 3000);
 }
 
-renderGrid();
+loadContent();
 </script>
 </body>
 </html>

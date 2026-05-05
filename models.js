@@ -56,6 +56,7 @@ const needSchema = new Schema({
   user_id:   { type: Schema.Types.ObjectId, ref: 'User', required: true },
   title:     { type: String, required: true, trim: true },
   domain:    { type: String, required: true, enum: ['medical', 'engineering', 'arts'] },
+  description: { type: String, default: null },
   is_urgent: { type: Boolean, default: false },
   status:    { type: String, default: 'open', enum: ['open', 'fulfilled'] },
 }, { timestamps: true });
@@ -66,6 +67,7 @@ const hubContentSchema = new Schema({
   title:     { type: String, required: true, trim: true },
   type:      { type: String, required: true, enum: ['summary', 'notes', 'exam'] },
   domain:    { type: String, required: true, enum: ['medical', 'engineering', 'arts'] },
+  description: { type: String, default: null },
   year:      { type: String, default: null },
   file_url:  { type: String, required: true },
   downloads: { type: Number, default: 0 },

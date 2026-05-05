@@ -212,8 +212,17 @@ async function loadDashboard() {
   try {
     /* Notifications */
     const notif = await DashboardAPI.getNotifications();
-    const unread = (notif?.data || []).filter(n => !n.is_read).length;
-    if (unread) {
+    let unread = (notif?.data || []).filter(n => !n.is_read).length;
+
+    /* Add Unread Messages to Bell */
+    const msgs = await MessagesAPI.getAll();
+    if (msgs?.data) {
+      msgs.data.forEach(conv => {
+        unread += conv.unread_count || 0;
+      });
+    }
+
+    if (unread > 0) {
       const badge = document.getElementById('notifBadge');
       badge.textContent = unread;
       badge.style.display = 'flex';

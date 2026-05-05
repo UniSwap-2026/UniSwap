@@ -1,9 +1,16 @@
-const { Message, Request } = require('../models');
+const { Message, Request, Listing } = require('../models');
 
 exports.getConversations = async (userId) => {
+  // Get listings owned by the user
+  const myListings = await Listing.find({ user_id: userId }).select('_id');
+  const myListingIds = myListings.map(l => l._id);
+
   const requests = await Request.find({
-    $or: [{ requester_id: userId }],
-    status: { $in: ['accepted', 'done'] },
+    $or: [
+      { requester_id: userId },
+      { listing_id: { $in: myListingIds } }
+    ],
+    status: { $in: ['pending', 'accepted', 'done'] },
   })
     .populate({ path: 'listing_id', populate: { path: 'user_id', select: 'name _id' } })
     .populate('requester_id', 'name _id');

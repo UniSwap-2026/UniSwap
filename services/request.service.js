@@ -32,6 +32,16 @@ exports.create = async ({ listing_id, message }, requester) => {
 
   const request = await Request.create({ listing_id, requester_id: requester.id, message });
 
+  // Create initial message
+  if (message) {
+    const { Message } = require('../models');
+    await Message.create({
+      request_id: request._id,
+      sender_id: requester.id,
+      body: message
+    });
+  }
+
   await Notification.create({
     user_id: listing.user_id,
     type:    'new_request',

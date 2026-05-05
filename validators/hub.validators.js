@@ -18,8 +18,7 @@ exports.uploadContentRules = [
     .isIn(VALID_DOMAINS).withMessage(`Domain must be one of: ${VALID_DOMAINS.join(', ')}`),
 
   body('file_url')
-    .notEmpty().withMessage('File URL is required')
-    .isURL().withMessage('file_url must be a valid URL'),
+    .notEmpty().withMessage('File URL is required'),
 
   body('year')
     .optional({ nullable: true })

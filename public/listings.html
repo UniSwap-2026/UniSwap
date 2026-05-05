@@ -51,7 +51,9 @@
           <button class="domain-tab active" data-domain="medical">
             Medical
           </button>
-          <button class="domain-tab" data-domain="engineering">Engineering</button>
+          <button class="domain-tab" data-domain="engineering">
+            Engineering
+          </button>
           <button class="domain-tab" data-domain="arts">Arts</button>
         </div>
       </div>
@@ -454,14 +456,15 @@
         }
       };
 
-      window.deleteDBAd = async function(id) {
+      window.deleteDBAd = async function (id) {
         try {
           await ListingsAPI.delete(id);
           location.reload();
         } catch (err) {
           console.error(err);
           // showToast is available from api.js if included, or we just rely on console error
-          if(typeof showToast === 'function') showToast('Failed to delete listing', 'error');
+          if (typeof showToast === "function")
+            showToast("Failed to delete listing", "error");
         }
       };
 
@@ -471,7 +474,7 @@
           const ads = response.data;
           if (!ads || ads.length === 0) return;
 
-        var html = `
+          var html = `
           <style>
             .delete-btn-local {
               flex: 1; width: auto; margin-top: 0; 
@@ -490,36 +493,38 @@
             }
           </style>
         `;
-        ads.forEach(function (ad) {
-          var badgesClass =
-            { donate: "badge-donate", swap: "badge-swap", sell: "badge-sell" }[
-              ad.type
-            ] || "badge-donate";
-          var typeLabel =
-            (ad.type || "donate").charAt(0).toUpperCase() +
-            (ad.type || "donate").slice(1);
-          var urgentClass = ad.urgent ? " urgent-card" : "";
-          var urgentBadge = ad.urgent
-            ? '<span class="badge badge-urgent">⚡ Urgent</span>'
-            : "";
-          var urgentBtnClass = ad.urgent ? " urgent-btn" : "";
+          ads.forEach(function (ad) {
+            var badgesClass =
+              {
+                donate: "badge-donate",
+                swap: "badge-swap",
+                sell: "badge-sell",
+              }[ad.type] || "badge-donate";
+            var typeLabel =
+              (ad.type || "donate").charAt(0).toUpperCase() +
+              (ad.type || "donate").slice(1);
+            var urgentClass = ad.urgent ? " urgent-card" : "";
+            var urgentBadge = ad.urgent
+              ? '<span class="badge badge-urgent">⚡ Urgent</span>'
+              : "";
+            var urgentBtnClass = ad.urgent ? " urgent-btn" : "";
 
-          var images = ad.images || (ad.image ? [ad.image] : []);
+            var images = ad.images || (ad.image ? [ad.image] : []);
 
-          var icon = "📦";
-          if (ad.domain === "medical") icon = "⚕️";
-          if (ad.domain === "eng") icon = "⚙️";
-          if (ad.domain === "arts") icon = "📖";
+            var icon = "📦";
+            if (ad.domain === "medical") icon = "⚕️";
+            if (ad.domain === "eng") icon = "⚙️";
+            if (ad.domain === "arts") icon = "📖";
 
-          var cardImgContent = "";
-          if (images.length > 0) {
-            if (images.length === 1) {
-              cardImgContent =
-                '<img src="' +
-                images[0] +
-                '" style="width:100%;height:100%;object-fit:contain;padding:12px;">';
-            } else {
-              cardImgContent = `
+            var cardImgContent = "";
+            if (images.length > 0) {
+              if (images.length === 1) {
+                cardImgContent =
+                  '<img src="' +
+                  images[0] +
+                  '" style="width:100%;height:100%;object-fit:contain;padding:12px;">';
+              } else {
+                cardImgContent = `
           <div style="position:absolute; width:100%; height:100%; left:0; top:0;">
             <style>
               .swipe-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.8); color:var(--navy); border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; z-index:10; font-size:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 4px rgba(0,0,0,0.15); transition:all 0.2s; padding:0; }
@@ -547,12 +552,15 @@
             </div>
           </div>
         `;
+              }
+            } else {
+              cardImgContent = icon;
             }
-          } else {
-            cardImgContent = icon;
-          }
 
-                  var isMyAd = Auth.getUser() && ad.user_id && ad.user_id._id === Auth.getUser().id;
+            var isMyAd =
+              Auth.getUser() &&
+              ad.user_id &&
+              ad.user_id._id === Auth.getUser().id;
             var authorName = ad.user_id ? ad.user_id.name : "Unknown User";
             var authorInitials = authorName.substring(0, 2).toUpperCase();
 
@@ -560,12 +568,12 @@
             if (isMyAd) {
               buttonsHTML = `
                 <div style="display: flex; gap: 8px; margin-top: 10px;">
-                  <button class="card-btn${urgentBtnClass}" style="flex: 3; width: auto; margin-top: 0;">Request</button>
+                  <button class="card-btn${urgentBtnClass}" style="flex: 3; width: auto; margin-top: 0;" onclick="window.location.href='listing-detail.html?id=${ad._id}'">Request</button>
                   <button class="card-btn delete-btn-local" onclick="window.deleteDBAd('${ad._id}')" title="Delete Listing">🗑️</button>
                 </div>
               `;
             } else {
-              buttonsHTML = `<button class="card-btn${urgentBtnClass}">Request</button>`;
+              buttonsHTML = `<button class="card-btn${urgentBtnClass}" onclick="window.location.href='listing-detail.html?id=${ad._id}'">Request</button>`;
             }
 
             var cardFooterUser = "";
@@ -607,7 +615,7 @@
 
           var noResultsNode = document.getElementById("noResults");
           noResultsNode.insertAdjacentHTML("beforebegin", html);
-          
+
           updateCounters();
           applyFilters();
         } catch (err) {
