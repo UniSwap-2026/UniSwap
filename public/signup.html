@@ -45,7 +45,8 @@
       <div class="form-row" style="display:flex; gap:12px;">
         <div class="form-group" style="flex:1;">
           <label class="form-label">Faculty/Domain</label>
-          <select class="form-input" id="regDomain">
+          <select class="form-input" id="regDomain" onchange="updateYearOptions()">
+            <option value="" disabled selected>Select domain</option>
             <option value="medical">Medical</option>
             <option value="engineering">Engineering</option>
             <option value="arts">Arts</option>
@@ -74,6 +75,50 @@
 
 <script>
 if (Auth.isLoggedIn()) window.location.href = 'dashboard.html';
+
+// Year options per domain
+var yearOptions = {
+  medical: [
+    { value: 'Year 1', label: 'Year 1' },
+    { value: 'Year 2', label: 'Year 2' },
+    { value: 'Year 3', label: 'Year 3' },
+    { value: 'Year 4', label: 'Year 4' },
+    { value: 'Year 5', label: 'Year 5' },
+  ],
+  engineering: [
+    { value: 'Preparation Year', label: 'Preparation Year' },
+    { value: 'Year 1', label: 'Year 1' },
+    { value: 'Year 2', label: 'Year 2' },
+    { value: 'Year 3', label: 'Year 3' },
+    { value: 'Year 4', label: 'Year 4' },
+  ],
+  arts: [
+    { value: 'Year 1', label: 'Year 1' },
+    { value: 'Year 2', label: 'Year 2' },
+    { value: 'Year 3', label: 'Year 3' },
+    { value: 'Year 4', label: 'Year 4' },
+  ],
+  default: [
+    { value: 'Year 1', label: 'Year 1' },
+    { value: 'Year 2', label: 'Year 2' },
+    { value: 'Year 3', label: 'Year 3' },
+    { value: 'Year 4', label: 'Year 4' },
+  ]
+};
+
+function updateYearOptions() {
+  var domain = document.getElementById('regDomain').value;
+  var yearSelect = document.getElementById('regYear');
+  var options = yearOptions[domain] || yearOptions['default'];
+  
+  yearSelect.innerHTML = '';
+  options.forEach(function(opt) {
+    var el = document.createElement('option');
+    el.value = opt.value;
+    el.textContent = opt.label;
+    yearSelect.appendChild(el);
+  });
+}
 
 function showToast(msg, type) {
   const toast = document.getElementById('toast');
@@ -105,7 +150,7 @@ async function doRegister() {
       name: name,
       email: email,
       password: pass,
-      domain: domain,
+      domain: domain || 'medical',
       college: 'University',
       year: year
     };
