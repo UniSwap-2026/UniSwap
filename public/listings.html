@@ -22,6 +22,10 @@
             <li><a href="research-hub.html">Research Hub</a></li>
             <li><a href="needs-board.html" class="needs-link">⚡ Needs</a></li>
           </ul>
+             <div style="display:flex;align-items:center;gap:10px;">
+        <div class="avatar" id="navAvatar" style="width:36px;height:36px;font-size:12px;cursor:pointer;" onclick="window.location='dashboard.html'">—</div>
+      </div>
+    </div>
         </div>
       </div>
     </nav>
@@ -155,6 +159,11 @@
 
     <script src="api.js"></script>
     <script>
+      const user = Auth.getUser();
+if (user) {
+  const initials = user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('navAvatar').textContent = initials;
+}
       // بيانات التخصصات (للأيقونة والعنوان والوصف فقط)
       var domainData = {
         medical: {
